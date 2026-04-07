@@ -1,12 +1,13 @@
 'use client'
 import Link from 'next/link'
-import { House, BookOpen, Users, ChalkboardTeacher } from '@phosphor-icons/react'
+import { House, CalendarCheck, BookOpen, Users, ChalkboardTeacher } from '@phosphor-icons/react'
 
 const tabs = [
-  { href: '/dashboard', label: 'Dashboard',   Icon: House },
-  { href: '/courses',   label: 'Modules',     Icon: BookOpen },
-  { href: '/students',  label: 'Students',    Icon: Users },
-  { href: '/teachers',  label: 'Instructors', Icon: ChalkboardTeacher },
+  { href: '/dashboard',  label: 'Dashboard',  Icon: House },
+  { href: '/attendance', label: 'Attendance', Icon: CalendarCheck },
+  { href: '/courses',    label: 'Modules',    Icon: BookOpen },
+  { href: '/students',   label: 'Students',   Icon: Users },
+  { href: '/teachers',   label: 'Instructors',Icon: ChalkboardTeacher },
 ]
 
 export default function BottomNav({ currentPath }: { currentPath: string }) {
