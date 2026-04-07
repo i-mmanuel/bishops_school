@@ -28,7 +28,6 @@ export default function LoginPage() {
     <div className="min-h-[100dvh] bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="mb-10 text-center">
-          <p className="text-xs font-label text-on-surface-variant uppercase tracking-widest mb-2">The Nocturne Scholar</p>
           <h1 className="text-3xl font-headline font-bold text-on-surface tracking-tight">Welcome back</h1>
           <p className="text-sm font-label text-on-surface-variant mt-2">Sign in to your principal dashboard</p>
         </div>

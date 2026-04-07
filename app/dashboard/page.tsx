@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import Link from 'next/link'
 import {
@@ -106,8 +107,8 @@ export default function DashboardPage() {
             {enrichedAlerts.map(a => (
               <Link key={`mob-${a.studentId}-${a.classId}`} href={`/students/${a.studentId}`}
                 className="p-4 bg-surface-container-low rounded-2xl flex items-center gap-4 border-l-4 border-error hover:bg-surface-container-high transition-colors">
-                <div className="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-sm font-headline font-bold text-primary ring-2 ring-error/10 shrink-0">
-                  {a.studentName.split(' ').map((n: string) => n[0]).join('')}
+                <div className="w-12 h-12 rounded-xl overflow-hidden ring-2 ring-error/10 shrink-0">
+                  <Image src={`https://i.pravatar.cc/80?u=${a.studentId}`} alt={a.studentName} width={48} height={48} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-grow min-w-0">
                   <h4 className="font-semibold text-sm text-on-surface">{a.studentName}</h4>
@@ -221,8 +222,8 @@ export default function DashboardPage() {
               <div className="space-y-4">
                 {enrichedAlerts.map(a => (
                   <Link key={`${a.studentId}-${a.classId}`} href={`/students/${a.studentId}`} className="flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-xl bg-surface-container-highest flex items-center justify-center text-xs font-headline font-bold text-primary ring-2 ring-error/10 shrink-0">
-                      {a.studentName.split(' ').map((n: string) => n[0]).join('')}
+                    <div className="w-11 h-11 rounded-xl overflow-hidden ring-2 ring-error/10 shrink-0">
+                      <Image src={`https://i.pravatar.cc/80?u=${a.studentId}`} alt={a.studentName} width={44} height={44} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">

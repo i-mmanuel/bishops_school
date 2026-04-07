@@ -4,6 +4,10 @@ const withPWA = require('next-pwa')({
 })
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
+const nextConfig = {
+  images: {
+    remotePatterns: [{ protocol: 'https', hostname: 'i.pravatar.cc' }],
+  },
+}
 
 module.exports = withPWA(nextConfig)

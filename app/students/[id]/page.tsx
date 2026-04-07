@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import {
   getStudentById, getCoursesForStudent, getAttendanceRate,
@@ -21,7 +22,6 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
 
   const modules = getCoursesForStudent(params.id)
   const history = getRecentAttendanceHistory(params.id)
-  const initials = student.name.split(' ').map(n => n[0]).join('')
 
   const { present: totalPresent, total: totalSessions } = getAttendanceRate(params.id)
   const totalAbsent = totalSessions - totalPresent
@@ -42,8 +42,14 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
           {/* Left: avatar + name */}
           <div className="col-span-8 flex flex-col md:flex-row items-center md:items-end gap-8">
             <div className="relative group">
-              <div className="w-48 h-48 rounded-xl overflow-hidden shadow-[0_12px_40px_0_rgba(0,0,0,0.25)] border-2 border-outline-variant/10 bg-surface-container-highest flex items-center justify-center">
-                <span className="text-6xl font-headline font-black text-primary">{initials}</span>
+              <div className="w-48 h-48 rounded-xl overflow-hidden shadow-[0_12px_40px_0_rgba(0,0,0,0.25)] border-2 border-outline-variant/10">
+                <Image
+                  src={`https://i.pravatar.cc/200?u=${student.id}`}
+                  alt={student.name}
+                  width={192}
+                  height={192}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-on-secondary shadow-lg">
                 <Seal size={24} weight="fill" className="text-on-secondary" />
@@ -138,7 +144,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
             <div className="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/5">
               <div className="divide-y divide-outline-variant/10">
                 {modules.map((mod, idx) => {
-                  const { present, total, rate } = getAttendanceRate(params.id)
+                  const { rate, present: modPresent, total: modTotal } = getAttendanceRate(params.id)
                   const iconColors = ['text-primary bg-primary/10', 'text-secondary bg-secondary/10', 'text-tertiary bg-tertiary/10', 'text-on-surface-variant bg-on-surface-variant/10']
                   const iconColor = iconColors[idx % iconColors.length]
                   const barColor = rate >= 80 ? 'bg-secondary' : rate >= 65 ? 'bg-primary' : 'bg-error'
@@ -157,7 +163,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
                       <div className="flex flex-col items-end gap-2 w-full sm:w-48">
                         <div className="flex justify-between w-full text-xs font-bold font-label">
                           <span className={rateColor}>{rate}%</span>
-                          <span className="text-on-surface-variant">{present}/{total} sessions</span>
+                          <span className="text-on-surface-variant">{modPresent}/{modTotal} sessions</span>
                         </div>
                         <div className="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
                           <div className={`h-full rounded-full ${barColor}`} style={{ width: `${rate}%` }} />
@@ -194,8 +200,14 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
         <section className="md:hidden flex flex-col items-center text-center space-y-4 mb-8">
           <div className="relative">
             <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-primary to-secondary">
-              <div className="w-full h-full rounded-full bg-surface-container-highest flex items-center justify-center border-4 border-surface">
-                <span className="text-3xl font-headline font-black text-primary">{initials}</span>
+              <div className="w-full h-full rounded-full overflow-hidden border-4 border-surface">
+                <Image
+                  src={`https://i.pravatar.cc/200?u=${student.id}`}
+                  alt={student.name}
+                  width={128}
+                  height={128}
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
             <div className="absolute bottom-1 right-1 bg-secondary text-on-secondary px-2 py-0.5 rounded-full flex items-center gap-1 shadow-lg">

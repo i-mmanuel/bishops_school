@@ -1,17 +1,16 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 import {
-  SquaresFour, BookOpen, Users, ChartBar,
-  Question, SignOut, GraduationCap
+  SquaresFour, BookOpen, Users, SignOut, GraduationCap
 } from '@phosphor-icons/react'
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard',  Icon: SquaresFour },
-  { href: '/courses',   label: 'Courses',    Icon: BookOpen },
-  { href: '/students',  label: 'Students',   Icon: Users },
-  { href: '/reports',   label: 'Reports',    Icon: ChartBar },
+  { href: '/dashboard', label: 'Dashboard', Icon: SquaresFour },
+  { href: '/courses',   label: 'Modules',   Icon: BookOpen },
+  { href: '/students',  label: 'Students',  Icon: Users },
 ]
 
 export default function Sidebar({ currentPath }: { currentPath: string }) {
@@ -26,8 +25,7 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
           <GraduationCap size={22} weight="fill" className="text-on-primary" />
         </div>
         <div>
-          <h1 className="text-lg font-black text-primary leading-none font-headline">Institution</h1>
-          <p className="text-xs text-on-surface-variant font-label">Elite Academy</p>
+          <h1 className="text-lg font-black text-primary leading-none font-headline">Bishop&apos;s School</h1>
         </div>
       </div>
 
@@ -50,11 +48,6 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
 
       {/* Bottom */}
       <div className="mt-auto space-y-1 border-t border-outline-variant/10 pt-6">
-        <Link href="#"
-          className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors text-sm">
-          <Question size={20} />
-          <span className="font-label">Help Center</span>
-        </Link>
         <button onClick={() => { logout(); router.push('/login') }}
           className="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-tertiary hover:bg-white/5 transition-colors text-sm">
           <SignOut size={20} />
@@ -62,8 +55,14 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
         </button>
         {/* User profile */}
         <div className="flex items-center gap-3 px-4 py-3 mt-2">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary-dim/20 border border-primary/20 flex items-center justify-center text-sm font-headline font-bold text-primary shrink-0">
-            JV
+          <div className="w-10 h-10 rounded-full overflow-hidden border border-primary/20 shrink-0">
+            <Image
+              src="https://i.pravatar.cc/80?u=principal-julian"
+              alt="Principal"
+              width={40}
+              height={40}
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="overflow-hidden">
             <p className="text-sm font-semibold truncate text-on-surface">Dr. Julian Vance</p>

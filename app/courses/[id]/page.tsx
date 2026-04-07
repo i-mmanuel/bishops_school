@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation'
+import Image from 'next/image'
 import Link from 'next/link'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import {
@@ -134,7 +135,6 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                   {students.map(student => {
                     const latestStatus = latestAttendance.find(a => a.studentId === student.id)?.status ?? 'absent'
                     const { rate } = getAttendanceRate(student.id)
-                    const initials = student.name.split(' ').map(n => n[0]).join('')
                     const isPresent = latestStatus === 'present'
                     const statusColor = isPresent ? 'bg-secondary/10 text-secondary' : 'bg-error/10 text-error'
                     const dotColor = isPresent
@@ -145,12 +145,18 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                       <tr key={student.id} className="group hover:bg-white/5 transition-all duration-200">
                         <td className="px-8 py-5">
                           <Link href={`/students/${student.id}`} className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-full border border-primary/20 bg-surface-container-highest flex items-center justify-center text-sm font-headline font-bold text-primary shrink-0">
-                              {initials}
+                            <div className="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/20 shrink-0">
+                              <Image
+                                src={`https://i.pravatar.cc/80?u=${student.id}`}
+                                alt={student.name}
+                                width={40}
+                                height={40}
+                                className="w-full h-full object-cover"
+                              />
                             </div>
                             <div>
                               <div className="font-semibold text-on-surface">{student.name}</div>
-                              <div className="text-xs text-on-surface-variant">{student.name.toLowerCase().replace(' ', '.')}@scholar.edu</div>
+                              <div className="text-xs text-on-surface-variant">{student.id.toUpperCase()}</div>
                             </div>
                           </Link>
                         </td>
@@ -275,7 +281,6 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
             <div className="space-y-3">
               {students.map(student => {
                 const latestStatus = latestAttendance.find(a => a.studentId === student.id)?.status ?? 'absent'
-                const initials = student.name.split(' ').map(n => n[0]).join('')
                 const isPresent = latestStatus === 'present'
                 return (
                   <Link
@@ -284,8 +289,14 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                     className="bg-surface-container-highest rounded-xl p-4 flex items-center justify-between hover:bg-surface-bright transition-colors duration-200"
                   >
                     <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-headline font-bold border-2 ${isPresent ? 'border-secondary/20 text-secondary' : 'border-error/20 text-error'} bg-surface-container-high`}>
-                        {initials}
+                      <div className={`w-12 h-12 rounded-full overflow-hidden border-2 ${isPresent ? 'border-secondary/20' : 'border-error/20'} shrink-0`}>
+                        <Image
+                          src={`https://i.pravatar.cc/80?u=${student.id}`}
+                          alt={student.name}
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                       <div>
                         <p className="font-semibold text-on-surface text-sm">{student.name}</p>
