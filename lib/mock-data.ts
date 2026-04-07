@@ -1,433 +1,555 @@
-import type { Principal, Teacher, Course, Student, Session, Attendance,
-              AttendanceRate, CriticalAlert, WeeklyTrend } from './types'
+import type { Principal, Denomination, Church, Class, Teacher, Module, TeacherModuleAssignment, Student, Session, Attendance, AttendanceRate, CriticalAlert, WeeklyTrend } from './types'
 
 // ─── Records ────────────────────────────────────────────────────────────────
 
-export const PRINCIPAL: Principal = {
-  id: 'p1', name: 'Dr. Julian Vance', email: 'principal@academy.edu', password: 'nocturne2026'
-}
+export const DENOMINATIONS: Denomination[] = [
+  { id: 'd1', name: 'Qodesh Family Church',       abbreviation: 'QFC' },
+  { id: 'd2', name: 'Loyalty House International', abbreviation: 'LHI' },
+]
+
+export const CHURCHES: Church[] = [
+  // QFC
+  { id: 'ch1', name: 'QFC Grace Chapel',       denominationId: 'd1' },
+  { id: 'ch2', name: 'QFC Covenant Assembly',   denominationId: 'd1' },
+  { id: 'ch3', name: 'QFC Glory Tabernacle',    denominationId: 'd1' },
+  { id: 'ch4', name: 'QFC Faith Centre',        denominationId: 'd1' },
+  // LHI
+  { id: 'ch5', name: 'LHI Redemption House',    denominationId: 'd2' },
+  { id: 'ch6', name: 'LHI Grace Cathedral',     denominationId: 'd2' },
+  { id: 'ch7', name: 'LHI Victory Chapel',      denominationId: 'd2' },
+  { id: 'ch8', name: 'LHI Emmanuel Assembly',   denominationId: 'd2' },
+]
+
+export const CLASSES: Class[] = [
+  { id: 'cls1', name: 'Makarios' },
+  { id: 'cls2', name: 'Poimen'   },
+]
 
 export const TEACHERS: Teacher[] = [
-  { id: 't1', name: 'Dr. Elena Vance' },
-  { id: 't2', name: 'Prof. Marcus Chen' },
-  { id: 't3', name: 'Dr. Sarah Chen' },
-  { id: 't4', name: 'Prof. Julian Ward' },
+  { id: 't1', name: 'Pastor Emmanuel Asante'    },
+  { id: 't2', name: 'Deaconess Grace Mensah'    },
+  { id: 't3', name: 'Elder Philip Boateng'      },
+  { id: 't4', name: 'Pastor Rebecca Owusu'      },
 ]
 
-export const STUDENTS: Student[] = [
-  { id: 's1',  name: 'Amara Okafor' },
-  { id: 's2',  name: 'Julian Rivera' },
-  { id: 's3',  name: 'Sophie Chen' },
-  { id: 's4',  name: 'Marcus Thorne' },
-  { id: 's5',  name: 'Elena Petrova' },
-  { id: 's6',  name: 'Kai Nakamura' },
-  { id: 's7',  name: 'Zara Osei' },
-  { id: 's8',  name: 'Luca Ferretti' },
-  { id: 's9',  name: 'Nadia Volkov' },
-  { id: 's10', name: 'Theo Adeyemi' },
-  { id: 's11', name: 'Iris Fontaine' },
-  { id: 's12', name: 'Ravi Kapoor' },
-  { id: 's13', name: 'Celeste Moreau' },
-  { id: 's14', name: 'Dario Ricci' },
-  { id: 's15', name: 'Yuna Park' },
-  { id: 's16', name: 'Felix Braun' },
-]
-
-// today's ISO date — used to ensure "Present Today" is non-zero
-const today = new Date().toISOString().split('T')[0]
-
-// dates going back 8 weeks
-function daysAgo(n: number) {
-  const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().split('T')[0]
+export const PRINCIPAL: Principal = {
+  id: 'p1', name: 'Dr. Julian Vance',
+  email: 'principal@academy.edu', password: 'nocturne2026'
 }
 
-export const COURSES: Course[] = [
+export const STUDENTS: Student[] = [
+  // Makarios class (cls1)
+  { id: 's1',  name: 'Kofi Asante',       classId: 'cls1', churchId: 'ch1' },
+  { id: 's2',  name: 'Abena Mensah',      classId: 'cls1', churchId: 'ch5' },
+  { id: 's3',  name: 'Emmanuel Boateng',  classId: 'cls1', churchId: 'ch2' },
+  { id: 's4',  name: 'Akua Adjei',        classId: 'cls1', churchId: 'ch6' },
+  { id: 's5',  name: 'Daniel Owusu',      classId: 'cls1', churchId: 'ch1' },
+  { id: 's6',  name: 'Priscilla Frimpong',classId: 'cls1', churchId: 'ch7' },
+  { id: 's7',  name: 'Samuel Darko',      classId: 'cls1', churchId: 'ch3' },
+  { id: 's8',  name: 'Ama Kusi',          classId: 'cls1', churchId: 'ch5' },
+  { id: 's9',  name: 'Benjamin Appiah',   classId: 'cls1', churchId: 'ch4' },
+  { id: 's10', name: 'Esther Amoah',      classId: 'cls1', churchId: 'ch8' },
+  { id: 's11', name: 'Joshua Tetteh',     classId: 'cls1', churchId: 'ch2' },
+  { id: 's12', name: 'Rebecca Asiedu',    classId: 'cls1', churchId: 'ch6' },
+  { id: 's13', name: 'Michael Ofori',     classId: 'cls1', churchId: 'ch1' },
+  { id: 's14', name: 'Comfort Boadu',     classId: 'cls1', churchId: 'ch7' },
+  { id: 's15', name: 'Isaac Acheampong',  classId: 'cls1', churchId: 'ch3' },
+  // Poimen class (cls2)
+  { id: 's16', name: 'Elizabeth Nkrumah', classId: 'cls2', churchId: 'ch8' },
+  { id: 's17', name: 'Peter Amponsah',    classId: 'cls2', churchId: 'ch4' },
+  { id: 's18', name: 'Mary Sarpong',      classId: 'cls2', churchId: 'ch5' },
+  { id: 's19', name: 'John Addae',        classId: 'cls2', churchId: 'ch2' },
+  { id: 's20', name: 'Vivian Yeboah',     classId: 'cls2', churchId: 'ch6' },
+  { id: 's21', name: 'Philip Mensah',     classId: 'cls2', churchId: 'ch3' },
+  { id: 's22', name: 'Felicia Owusu',     classId: 'cls2', churchId: 'ch7' },
+  { id: 's23', name: 'Stephen Kumi',      classId: 'cls2', churchId: 'ch1' },
+  { id: 's24', name: 'Cynthia Mensah',    classId: 'cls2', churchId: 'ch8' },
+  { id: 's25', name: 'George Boateng',    classId: 'cls2', churchId: 'ch4' },
+  { id: 's26', name: 'Patricia Adjei',    classId: 'cls2', churchId: 'ch5' },
+  { id: 's27', name: 'Andrew Frimpong',   classId: 'cls2', churchId: 'ch2' },
+  { id: 's28', name: 'Irene Darko',       classId: 'cls2', churchId: 'ch6' },
+  { id: 's29', name: 'Solomon Kusi',      classId: 'cls2', churchId: 'ch1' },
+  { id: 's30', name: 'Joanna Appiah',     classId: 'cls2', churchId: 'ch7' },
+]
+
+export const MODULES: Module[] = [
   {
-    id: 'c1', name: 'Advanced Data Structures', teacherId: 't1',
-    studentIds: ['s1','s2','s3','s4','s5','s6'],
-    schedule: { days: ['Mon','Wed','Fri'], time: '09:00', room: 'Room 402' }
+    id: 'm1', name: 'Loyalty', code: 'L',
+    topics: [
+      'Loyalty And Disloyalty','Those Who Accuse You','Those Who Are Proud',
+      'Those Who Are Dangerous Sons','Those Who Are Ignorant','Those Who Forget',
+      'Those Who Leave You','Those Who Pretend','One of You Is a Devil',
+      'Those Who Honour You','Those Who Are Offended','Judas Who Is He?',
+      'Those Who Are Mad','Why Loyalty','Pillars Of Loyalty',
+      'Those Who Are Wolves','Those Who Are Slanderers','Those Who Rebel',
+      'Those Who Make Shipwreck','Be Faithful unto Death',
+    ],
   },
   {
-    id: 'c2', name: 'Theory of Computation', teacherId: 't1',
-    studentIds: ['s7','s8','s9','s10','s11'],
-    schedule: { days: ['Tue','Thu'], time: '11:00', room: 'Room 210' }
+    id: 'm2', name: 'The Call of God', code: 'COG',
+    topics: [
+      'Many Are Called','Why Few Are Chosen','Attempt Great Things for God',
+      'Tasters Or Partakers','Can\'t You Do Just a Little Bit More',
+      'Weeping and Gnashing','Ready @20','Am I Good for Nothing',
+      'Fruitfulness','Preparation of the Gospel','The Privilege',
+      'Going Deeper and Doing More','Ministerial Barrenness',
+      'Predestination','Awake O Sleeper','The Word of My Patience',
+    ],
   },
   {
-    id: 'c3', name: 'Cloud Architecture', teacherId: 't2',
-    studentIds: ['s1','s3','s5','s12','s13','s14'],
-    schedule: { days: ['Mon','Wed'], time: '14:00', room: 'Lab 3' }
+    id: 'm3', name: 'The Work of Ministry', code: 'WOM',
+    topics: [
+      'How You Can Make Full Proof of Your Ministry',
+      'Rules of Full Time Ministry','Rules of Church Work',
+      'Losing Suffering Sacrificing and Dying',
+      'It Is a Great Thing to Serve the Lord',
+      'The Tree and Your Ministry','Not a Novice','Seeing And Hearing',
+      'If You Love the Lord','Bema Judgment and Justice','Stir It Up',
+      'Ministerial Ethics','The Big Secret ...Your Ministry Depends on Books',
+      'The Tests of the Righteous','The Reward for Hard Work is more work',
+    ],
   },
   {
-    id: 'c4', name: 'UX Research Methods', teacherId: 't3',
-    studentIds: ['s2','s4','s6','s15','s16'],
-    schedule: { days: ['Tue','Thu'], time: '13:00', room: 'Studio B' }
+    id: 'm4', name: 'Church Growth', code: 'CG',
+    topics: [
+      'Church Growth','Mega Church','Church Planting',
+      'Double Mega Missionary Church','1000 Micro Churches',
+      'The Church Must Send','Why Is This Church Not Working?',
+      'The Gift Of Governments','Church Administration',
+    ],
   },
   {
-    id: 'c5', name: 'Computational Statistics', teacherId: 't4',
-    studentIds: ['s7','s9','s11','s13','s15'],
-    schedule: { days: ['Mon','Wed','Fri'], time: '15:30', room: 'Room 118' }
+    id: 'm5', name: 'The Anointing', code: 'A',
+    topics: [
+      'Catch the Anointing','Steps to the Anointing','Amplify Your Ministry',
+      'Sweet Influences of the Anointing','The Anointing and the Presence',
+      'The Anointed and the Anointing','Steps to God\'s Presence',
+      'Flow in the Anointing','The Love of the Spirit',
+    ],
+  },
+  {
+    id: 'm6', name: 'Evangelism', code: 'E',
+    topics: [
+      'How You Can Preach Salvation','Anagkazo','Others','Tell Them',
+      'Make Yourselves Saviours of Men','People Who Went to Hell','Blood Power',
+    ],
+  },
+  {
+    id: 'm7', name: 'Pastoral Ministry', code: 'PM',
+    topics: [
+      'Transform Your Pastoral Ministry',
+      'What It Means to Become a Shepherd',
+      'The Art of Shepherding',
+      'Lord, I Know You Need Somebody',
+      'Top Ten Mistakes that Pastors Make','Laikos',
+    ],
+  },
+  {
+    id: 'm8', name: 'Prayer', code: 'Pr',
+    topics: [
+      '100% Answered Prayer','Prayer Changes Things','How to Pray',
+      'Everything by Prayer Nothing Without Prayer',
+      'Flow Prayer Book','Prayer Opportunities',
+    ],
+  },
+  {
+    id: 'm9', name: 'Leadership', code: 'Le',
+    topics: [
+      'The Art of Leadership','Wise as Serpents',
+      'Wisdom is the Principal Thing','The Determinants',
+    ],
+  },
+  {
+    id: 'm10', name: 'The Arts', code: 'TA',
+    topics: [
+      'The Art of Following','The Art of Leadership',
+      'The Art of Shepherding','The Art of Hearing',
+    ],
+  },
+  {
+    id: 'm11', name: 'The Secrets', code: 'TS',
+    topics: ['Faith Secrets','Hope Secrets','Victory Secrets','Enlargement Secrets'],
+  },
+  {
+    id: 'm12', name: 'Finances', code: 'F',
+    topics: [
+      'He that Hath','Why Non-tithing Christians Become Poor',
+      'Labour to be Blessed','Neutralize the Curse',
+    ],
+  },
+  {
+    id: 'm13', name: 'Marriage', code: 'M',
+    topics: [
+      'Model Marriage','The Beauty, the Beast and the Pastor',
+      'Jezebel, a Woman out of Order','Ppikos Maso',
+    ],
+  },
+  {
+    id: 'm14', name: 'War', code: 'War',
+    topics: ['A Good General','Now We Are at War'],
+  },
+  {
+    id: 'm15', name: 'Demonology', code: 'D',
+    topics: ['Demons and How to Deal with Them','Know Your Invisible Enemies'],
+  },
+  {
+    id: 'm16', name: 'Strong Christian', code: 'SC',
+    topics: [
+      'How to be Born Again and Avoid Hell',
+      'How You Can be a Strong Christian','Seven Great Principles',
+      'Read Your Bible','Spiritual Dangers','How Can I Say Thanks',
+      'Daughter, You Can Make It','Backsliding','Forgiveness Made Easy',
+      'How You Can Have an Effective Quiet Time',
+      'Name it! Claim it! Take It!',
+      'Who is He that Overcometh the World?',
+    ],
+  },
+  {
+    id: 'm17', name: 'Church History', code: 'CH',
+    topics: [
+      'History of Lighthouse Chapel Vol. 1',
+      'History of Lighthouse Chapel Vol. 2',
+      'History of Lighthouse Chapel Vol. 3',
+    ],
+  },
+  {
+    id: 'm18', name: 'Gift of Governance', code: 'GoG',
+    topics: Array.from({ length: 60 }, (_, i) => `Chapter ${i + 1}`),
+  },
+  {
+    id: 'm19', name: 'Bible Technology', code: 'BT',
+    topics: ['Bible Technology Materials'],
   },
 ]
 
-// Sessions: ~16 per course over 8 weeks, plus one for today
+export const TEACHER_MODULE_ASSIGNMENTS: TeacherModuleAssignment[] = [
+  { id: 'ta1', teacherId: 't1', moduleId: 'm1', classId: 'cls1' },
+  { id: 'ta2', teacherId: 't2', moduleId: 'm1', classId: 'cls2' },
+  { id: 'ta3', teacherId: 't3', moduleId: 'm2', classId: 'cls1' },
+  { id: 'ta4', teacherId: 't4', moduleId: 'm2', classId: 'cls2' },
+  { id: 'ta5', teacherId: 't2', moduleId: 'm3', classId: 'cls1' },
+  { id: 'ta6', teacherId: 't1', moduleId: 'm3', classId: 'cls2' },
+  { id: 'ta7', teacherId: 't4', moduleId: 'm4', classId: 'cls1' },
+  { id: 'ta8', teacherId: 't3', moduleId: 'm4', classId: 'cls2' },
+]
+
+// ─── Date helpers ─────────────────────────────────────────────────────────────
+
+const today = new Date().toISOString().split('T')[0]
+function daysAgo(n: number): string {
+  const d = new Date()
+  d.setDate(d.getDate() - n)
+  return d.toISOString().split('T')[0]
+}
+
+// ─── Sessions ─────────────────────────────────────────────────────────────────
+
 export const SESSIONS: Session[] = [
-  // Course c1 — 16 sessions + today
-  { id: 'ses-c1-01', courseId: 'c1', date: daysAgo(56), submittedBy: 't1' },
-  { id: 'ses-c1-02', courseId: 'c1', date: daysAgo(54), submittedBy: 't1' },
-  { id: 'ses-c1-03', courseId: 'c1', date: daysAgo(52), submittedBy: 't1' },
-  { id: 'ses-c1-04', courseId: 'c1', date: daysAgo(49), submittedBy: 't1' },
-  { id: 'ses-c1-05', courseId: 'c1', date: daysAgo(47), submittedBy: 't1' },
-  { id: 'ses-c1-06', courseId: 'c1', date: daysAgo(45), submittedBy: 't1' },
-  { id: 'ses-c1-07', courseId: 'c1', date: daysAgo(42), submittedBy: 't1' },
-  { id: 'ses-c1-08', courseId: 'c1', date: daysAgo(40), submittedBy: 't1' },
-  { id: 'ses-c1-09', courseId: 'c1', date: daysAgo(38), submittedBy: 't1' },
-  { id: 'ses-c1-10', courseId: 'c1', date: daysAgo(35), submittedBy: 't1' },
-  { id: 'ses-c1-11', courseId: 'c1', date: daysAgo(33), submittedBy: 't1' },
-  { id: 'ses-c1-12', courseId: 'c1', date: daysAgo(31), submittedBy: 't1' },
-  { id: 'ses-c1-13', courseId: 'c1', date: daysAgo(28), submittedBy: 't1' },
-  { id: 'ses-c1-14', courseId: 'c1', date: daysAgo(14), submittedBy: 't1' },
-  { id: 'ses-c1-15', courseId: 'c1', date: daysAgo(7),  submittedBy: 't1' },
-  { id: 'ses-c1-16', courseId: 'c1', date: daysAgo(2),  submittedBy: 't1' },
-  { id: 'ses-c1-today', courseId: 'c1', date: today,    submittedBy: 't1' },
-  // Course c2
-  { id: 'ses-c2-01', courseId: 'c2', date: daysAgo(55), submittedBy: 't1' },
-  { id: 'ses-c2-02', courseId: 'c2', date: daysAgo(50), submittedBy: 't1' },
-  { id: 'ses-c2-03', courseId: 'c2', date: daysAgo(48), submittedBy: 't1' },
-  { id: 'ses-c2-04', courseId: 'c2', date: daysAgo(43), submittedBy: 't1' },
-  { id: 'ses-c2-05', courseId: 'c2', date: daysAgo(41), submittedBy: 't1' },
-  { id: 'ses-c2-06', courseId: 'c2', date: daysAgo(36), submittedBy: 't1' },
-  { id: 'ses-c2-07', courseId: 'c2', date: daysAgo(29), submittedBy: 't1' },
-  { id: 'ses-c2-08', courseId: 'c2', date: daysAgo(22), submittedBy: 't1' },
-  { id: 'ses-c2-09', courseId: 'c2', date: daysAgo(15), submittedBy: 't1' },
-  { id: 'ses-c2-10', courseId: 'c2', date: daysAgo(8),  submittedBy: 't1' },
-  { id: 'ses-c2-11', courseId: 'c2', date: daysAgo(1),  submittedBy: 't1' },
-  { id: 'ses-c2-today', courseId: 'c2', date: today,    submittedBy: 't1' },
-  // Course c3
-  { id: 'ses-c3-01', courseId: 'c3', date: daysAgo(56), submittedBy: 't2' },
-  { id: 'ses-c3-02', courseId: 'c3', date: daysAgo(51), submittedBy: 't2' },
-  { id: 'ses-c3-03', courseId: 'c3', date: daysAgo(49), submittedBy: 't2' },
-  { id: 'ses-c3-04', courseId: 'c3', date: daysAgo(44), submittedBy: 't2' },
-  { id: 'ses-c3-05', courseId: 'c3', date: daysAgo(42), submittedBy: 't2' },
-  { id: 'ses-c3-06', courseId: 'c3', date: daysAgo(37), submittedBy: 't2' },
-  { id: 'ses-c3-07', courseId: 'c3', date: daysAgo(30), submittedBy: 't2' },
-  { id: 'ses-c3-08', courseId: 'c3', date: daysAgo(23), submittedBy: 't2' },
-  { id: 'ses-c3-09', courseId: 'c3', date: daysAgo(9),  submittedBy: 't2' },
-  { id: 'ses-c3-today', courseId: 'c3', date: today,    submittedBy: 't2' },
-  // Course c4
-  { id: 'ses-c4-01', courseId: 'c4', date: daysAgo(55), submittedBy: 't3' },
-  { id: 'ses-c4-02', courseId: 'c4', date: daysAgo(48), submittedBy: 't3' },
-  { id: 'ses-c4-03', courseId: 'c4', date: daysAgo(41), submittedBy: 't3' },
-  { id: 'ses-c4-04', courseId: 'c4', date: daysAgo(34), submittedBy: 't3' },
-  { id: 'ses-c4-05', courseId: 'c4', date: daysAgo(27), submittedBy: 't3' },
-  { id: 'ses-c4-06', courseId: 'c4', date: daysAgo(20), submittedBy: 't3' },
-  { id: 'ses-c4-07', courseId: 'c4', date: daysAgo(13), submittedBy: 't3' },
-  { id: 'ses-c4-08', courseId: 'c4', date: daysAgo(6),  submittedBy: 't3' },
-  // Course c5
-  { id: 'ses-c5-01', courseId: 'c5', date: daysAgo(56), submittedBy: 't4' },
-  { id: 'ses-c5-02', courseId: 'c5', date: daysAgo(54), submittedBy: 't4' },
-  { id: 'ses-c5-03', courseId: 'c5', date: daysAgo(49), submittedBy: 't4' },
-  { id: 'ses-c5-04', courseId: 'c5', date: daysAgo(47), submittedBy: 't4' },
-  { id: 'ses-c5-05', courseId: 'c5', date: daysAgo(42), submittedBy: 't4' },
-  { id: 'ses-c5-06', courseId: 'c5', date: daysAgo(35), submittedBy: 't4' },
-  { id: 'ses-c5-07', courseId: 'c5', date: daysAgo(28), submittedBy: 't4' },
-  { id: 'ses-c5-08', courseId: 'c5', date: daysAgo(21), submittedBy: 't4' },
-  { id: 'ses-c5-09', courseId: 'c5', date: daysAgo(14), submittedBy: 't4' },
-  { id: 'ses-c5-10', courseId: 'c5', date: daysAgo(7),  submittedBy: 't4' },
+  // Makarios class (cls1)
+  { id: 'ses1',  classId: 'cls1', moduleId: 'm1', teacherId: 't1', date: daysAgo(28) },
+  { id: 'ses2',  classId: 'cls1', moduleId: 'm1', teacherId: 't1', date: daysAgo(21) },
+  { id: 'ses3',  classId: 'cls1', moduleId: 'm2', teacherId: 't3', date: daysAgo(20) },
+  { id: 'ses4',  classId: 'cls1', moduleId: 'm2', teacherId: 't3', date: daysAgo(14) },
+  { id: 'ses5',  classId: 'cls1', moduleId: 'm3', teacherId: 't2', date: daysAgo(13) },
+  { id: 'ses6',  classId: 'cls1', moduleId: 'm1', teacherId: 't1', date: daysAgo(7)  },
+  { id: 'ses7',  classId: 'cls1', moduleId: 'm2', teacherId: 't3', date: daysAgo(3)  },
+  { id: 'ses8',  classId: 'cls1', moduleId: 'm3', teacherId: 't2', date: today       },
+  // Poimen class (cls2)
+  { id: 'ses9',  classId: 'cls2', moduleId: 'm1', teacherId: 't2', date: daysAgo(27) },
+  { id: 'ses10', classId: 'cls2', moduleId: 'm2', teacherId: 't4', date: daysAgo(20) },
+  { id: 'ses11', classId: 'cls2', moduleId: 'm1', teacherId: 't2', date: daysAgo(18) },
+  { id: 'ses12', classId: 'cls2', moduleId: 'm3', teacherId: 't1', date: daysAgo(13) },
+  { id: 'ses13', classId: 'cls2', moduleId: 'm2', teacherId: 't4', date: daysAgo(11) },
+  { id: 'ses14', classId: 'cls2', moduleId: 'm1', teacherId: 't2', date: daysAgo(6)  },
+  { id: 'ses15', classId: 'cls2', moduleId: 'm3', teacherId: 't1', date: daysAgo(2)  },
+  { id: 'ses16', classId: 'cls2', moduleId: 'm4', teacherId: 't3', date: today       },
 ]
 
-// Attendance records — deterministic rates
-// s2 (Julian Rivera) ~24% in c1 — at-risk
-// s9 (Nadia Volkov) ~50% in c2, ~30% in c5 — at-risk
+// ─── Attendance ───────────────────────────────────────────────────────────────
+
+function makeAttendance(
+  sessionId: string,
+  classId: string,
+  absentStudentIds: string[]
+): Attendance[] {
+  const classStudents = STUDENTS.filter(s => s.classId === classId)
+  return classStudents.map((s) => ({
+    id: `att-${sessionId}-${s.id}`,
+    sessionId,
+    studentId: s.id,
+    status: absentStudentIds.includes(s.id) ? 'absent' : 'present',
+  }))
+}
+
 export const ATTENDANCE: Attendance[] = [
-  // c1 sessions
-  ...(() => {
-    const c1Sessions = SESSIONS.filter(s => s.courseId === 'c1')
-    const c1Students = ['s1','s2','s3','s4','s5','s6']
-    const records: Attendance[] = []
-    c1Sessions.forEach((ses, si) => {
-      c1Students.forEach((stdId, stIdx) => {
-        const present = stdId === 's2' ? si < 4 : (si + stIdx) % 9 !== 0
-        records.push({ id: `att-${ses.id}-${stdId}`, sessionId: ses.id, studentId: stdId, status: present ? 'present' : 'absent' })
-      })
-    })
-    return records
-  })(),
-  // c2 sessions
-  ...(() => {
-    const c2Sessions = SESSIONS.filter(s => s.courseId === 'c2')
-    const c2Students = ['s7','s8','s9','s10','s11']
-    const records: Attendance[] = []
-    c2Sessions.forEach((ses, si) => {
-      c2Students.forEach((stdId, stIdx) => {
-        const present = stdId === 's9' ? si % 2 === 0 : (si + stIdx) % 10 !== 0
-        records.push({ id: `att-${ses.id}-${stdId}`, sessionId: ses.id, studentId: stdId, status: present ? 'present' : 'absent' })
-      })
-    })
-    return records
-  })(),
-  // c3 sessions
-  ...(() => {
-    const sessions = SESSIONS.filter(s => s.courseId === 'c3')
-    const students = ['s1','s3','s5','s12','s13','s14']
-    const records: Attendance[] = []
-    sessions.forEach((ses, si) => {
-      students.forEach((stdId, stIdx) => {
-        records.push({ id: `att-${ses.id}-${stdId}`, sessionId: ses.id, studentId: stdId, status: (si + stIdx) % 11 !== 0 ? 'present' : 'absent' })
-      })
-    })
-    return records
-  })(),
-  // c4 sessions
-  ...(() => {
-    const sessions = SESSIONS.filter(s => s.courseId === 'c4')
-    const students = ['s2','s4','s6','s15','s16']
-    const records: Attendance[] = []
-    sessions.forEach((ses, si) => {
-      students.forEach((stdId, stIdx) => {
-        records.push({ id: `att-${ses.id}-${stdId}`, sessionId: ses.id, studentId: stdId, status: (si + stIdx) % 9 !== 0 ? 'present' : 'absent' })
-      })
-    })
-    return records
-  })(),
-  // c5 sessions
-  ...(() => {
-    const sessions = SESSIONS.filter(s => s.courseId === 'c5')
-    const students = ['s7','s9','s11','s13','s15']
-    const records: Attendance[] = []
-    sessions.forEach((ses, si) => {
-      students.forEach((stdId, stIdx) => {
-        const present = stdId === 's9' ? si % 4 === 0 : (si + stIdx) % 10 !== 0
-        records.push({ id: `att-${ses.id}-${stdId}`, sessionId: ses.id, studentId: stdId, status: present ? 'present' : 'absent' })
-      })
-    })
-    return records
-  })(),
-]
+  makeAttendance('ses1',  'cls1', ['s8', 's13']),
+  makeAttendance('ses2',  'cls1', ['s4', 's11']),
+  makeAttendance('ses3',  'cls1', ['s2', 's9']),
+  makeAttendance('ses4',  'cls1', ['s7', 's15']),
+  makeAttendance('ses5',  'cls1', ['s6', 's3']),
+  makeAttendance('ses6',  'cls1', ['s6', 's14']),
+  makeAttendance('ses7',  'cls1', ['s6', 's14', 's1']),
+  makeAttendance('ses8',  'cls1', ['s6', 's14']),
+  makeAttendance('ses9',  'cls2', ['s19', 's27']),
+  makeAttendance('ses10', 'cls2', ['s16', 's24']),
+  makeAttendance('ses11', 'cls2', ['s21', 's30']),
+  makeAttendance('ses12', 'cls2', ['s18', 's25']),
+  makeAttendance('ses13', 'cls2', ['s22', 's20']),
+  makeAttendance('ses14', 'cls2', ['s22', 's17']),
+  makeAttendance('ses15', 'cls2', ['s22', 's29']),
+  makeAttendance('ses16', 'cls2', ['s22', 's26']),
+].flat()
 
 // ─── Runtime mutable arrays (for /attend submissions) ────────────────────────
 
 const runtimeSessions: Session[] = []
 const runtimeAttendance: Attendance[] = []
 
-// ─── Query Functions ─────────────────────────────────────────────────────────
+// ─── Query Functions ──────────────────────────────────────────────────────────
 
-export function getAllTeachers(): Teacher[] { return TEACHERS }
-export function getAllStudents(): Student[] { return STUDENTS }
-export function getAllCourses(): Course[]   { return COURSES }
+export function getDenominations(): Denomination[] { return DENOMINATIONS }
+export function getChurches(): Church[] { return CHURCHES }
+export function getChurchById(id: string): Church | undefined { return CHURCHES.find(c => c.id === id) }
+export function getChurchesByDenomination(denominationId: string): Church[] { return CHURCHES.filter(c => c.denominationId === denominationId) }
+export function getDenominationById(id: string): Denomination | undefined { return DENOMINATIONS.find(d => d.id === id) }
 
-// ─── Aliases expected by downstream tasks ────────────────────────────────────
+export function getClasses(): Class[] { return CLASSES }
+export function getClassById(id: string): Class | undefined { return CLASSES.find(c => c.id === id) }
+
 export function getTeachers(): Teacher[] { return TEACHERS }
+export function getAllTeachers(): Teacher[] { return TEACHERS }
+export function getTeacherById(id: string): Teacher | undefined { return TEACHERS.find(t => t.id === id) }
+
+export function getModules(): Module[] { return MODULES }
+export function getAllModules(): Module[] { return MODULES }
+export function getModuleById(id: string): Module | undefined { return MODULES.find(m => m.id === id) }
+// backward compat aliases
+export function getCourses(): Module[] { return MODULES }
+export function getCourseById(id: string): Module | undefined { return MODULES.find(m => m.id === id) }
+
 export function getStudents(): Student[] { return STUDENTS }
-export function getCourses(): Course[]   { return COURSES }
+export function getAllStudents(): Student[] { return STUDENTS }
+export function getStudentById(id: string): Student | undefined { return STUDENTS.find(s => s.id === id) }
+export function getStudentsByClass(classId: string): Student[] { return STUDENTS.filter(s => s.classId === classId) }
+// backward compat
+export function getStudentsForCourse(classId: string): Student[] { return getStudentsByClass(classId) }
 
-export function getAllSessions(): Session[] {
-  return [...SESSIONS, ...runtimeSessions]
-}
+export function getAllSessions(): Session[] { return [...SESSIONS, ...runtimeSessions] }
+export function getSessionsByClass(classId: string): Session[] { return getAllSessions().filter(s => s.classId === classId) }
+export function getSessionsByModule(moduleId: string): Session[] { return getAllSessions().filter(s => s.moduleId === moduleId) }
+// backward compat
+export function getSessionsForCourse(id: string): Session[] { return getSessionsByClass(id) }
 
-export function getAllAttendance(): Attendance[] {
-  return [...ATTENDANCE, ...runtimeAttendance]
-}
-
-export function getTeacherById(id: string): Teacher | undefined {
-  return TEACHERS.find(t => t.id === id)
-}
-export function getStudentById(id: string): Student | undefined {
-  return STUDENTS.find(s => s.id === id)
-}
-export function getCourseById(id: string): Course | undefined {
-  return COURSES.find(c => c.id === id)
-}
-export function getCoursesByTeacher(teacherId: string): Course[] {
-  return COURSES.filter(c => c.teacherId === teacherId)
-}
-export function getStudentsByCourse(courseId: string): Student[] {
-  const course = getCourseById(courseId)
-  if (!course) return []
-  return course.studentIds.map(id => STUDENTS.find(s => s.id === id)!).filter(Boolean)
-}
-export function getStudentsForCourse(courseId: string): Student[] { return getStudentsByCourse(courseId) }
-
-export function getSessionsByCourse(courseId: string): Session[] {
-  return [...SESSIONS, ...runtimeSessions].filter(s => s.courseId === courseId)
-}
-export function getSessionsForCourse(courseId: string): Session[] { return getSessionsByCourse(courseId) }
+export function getAllAttendance(): Attendance[] { return [...ATTENDANCE, ...runtimeAttendance] }
 export function getAttendanceForSession(sessionId: string): Attendance[] {
   return getAllAttendance().filter(a => a.sessionId === sessionId)
 }
-export function getAttendanceByCourse(courseId: string): Attendance[] {
-  const sessionIds = new Set(getSessionsByCourse(courseId).map(s => s.id))
-  return getAllAttendance().filter(a => sessionIds.has(a.sessionId))
-}
-export function sessionExistsForDate(courseId: string, date: string): boolean {
-  return getAllSessions().some(s => s.courseId === courseId && s.date === date)
+
+export function getTeacherModuleAssignments(): TeacherModuleAssignment[] { return TEACHER_MODULE_ASSIGNMENTS }
+export function getTeachersForModule(moduleId: string): { teacher: Teacher; classId: string }[] {
+  return TEACHER_MODULE_ASSIGNMENTS
+    .filter(a => a.moduleId === moduleId)
+    .map(a => ({ teacher: TEACHERS.find(t => t.id === a.teacherId)!, classId: a.classId }))
+    .filter(x => x.teacher)
 }
 
-export function getAttendanceRate(studentId: string, courseId: string): AttendanceRate {
-  const sessions = getSessionsByCourse(courseId)
-  const total = sessions.length
-  if (total === 0) return { studentId, courseId, rate: 0, present: 0, total: 0 }
-  const allAtt = getAllAttendance()
-  const present = sessions.reduce((acc, ses) => {
-    const record = allAtt.find(a => a.sessionId === ses.id && a.studentId === studentId)
-    return acc + (record?.status === 'present' ? 1 : 0)
-  }, 0)
-  return { studentId, courseId, rate: Math.round((present / total) * 100), present, total }
+// ─── Attendance rate functions ────────────────────────────────────────────────
+
+// Student attendance rate across all sessions in their class
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getAttendanceRate(studentId: string, _classIdOrCourseId?: string): AttendanceRate {
+  const student = STUDENTS.find(s => s.id === studentId)
+  if (!student) return { present: 0, total: 0, rate: 0 }
+  const sessions = getSessionsByClass(student.classId)
+  const att = getAllAttendance().filter(a => a.studentId === studentId && sessions.some(s => s.id === a.sessionId))
+  const present = att.filter(a => a.status === 'present').length
+  const total = att.length
+  return { present, total, rate: total > 0 ? Math.round((present / total) * 100) : 0 }
 }
 
-export function getCourseAttendanceAverage(courseId: string): number {
-  const course = getCourseById(courseId)
-  if (!course || course.studentIds.length === 0) return 0
-  const rates = course.studentIds.map(sid => getAttendanceRate(sid, courseId).rate)
+// Class-level attendance rate (average across all students in the class)
+export function getClassAttendanceRate(classId: string): number {
+  const students = getStudentsByClass(classId)
+  if (students.length === 0) return 0
+  const rates = students.map(s => getAttendanceRate(s.id).rate)
   return Math.round(rates.reduce((a, b) => a + b, 0) / rates.length)
 }
-export function getCourseAverageAttendance(courseId: string): number { return getCourseAttendanceAverage(courseId) }
 
+// Module attendance rate (across all sessions for this module, across all classes)
+export function getModuleAttendanceRate(moduleId: string): number {
+  const sessions = getSessionsByModule(moduleId)
+  if (sessions.length === 0) return 0
+  let present = 0, total = 0
+  for (const session of sessions) {
+    const att = getAttendanceForSession(session.id)
+    present += att.filter(a => a.status === 'present').length
+    total += att.length
+  }
+  return total > 0 ? Math.round((present / total) * 100) : 0
+}
+// backward compat
+export function getCourseAverageAttendance(id: string): number { return getModuleAttendanceRate(id) }
+
+// Institution-wide attendance rate
 export function getInstitutionHealth(): number {
-  const rates = COURSES.map(c => getCourseAttendanceAverage(c.id))
-  if (rates.length === 0) return 0
+  const rates = CLASSES.map(c => getClassAttendanceRate(c.id))
   return Math.round(rates.reduce((a, b) => a + b, 0) / rates.length)
 }
+export function getSchoolwideAttendanceRate(): number { return getInstitutionHealth() }
 
-export function getSchoolwideAttendanceRate(): number {
-  return getInstitutionHealth()
-}
-
-export function getCriticalAlerts(): CriticalAlert[] {
-  const alerts: CriticalAlert[] = []
-  COURSES.forEach(course => {
-    course.studentIds.forEach(sid => {
-      const { rate } = getAttendanceRate(sid, course.id)
-      if (rate < 70) {
-        const student = getStudentById(sid)
-        if (student) alerts.push({ studentId: sid, studentName: student.name, courseId: course.id, courseName: course.name, rate })
-      }
-    })
-  })
-  return alerts.sort((a, b) => a.rate - b.rate).slice(0, 5)
-}
+// ─── Today counts ─────────────────────────────────────────────────────────────
 
 export function getPresentTodayCount(): number {
-  const todayStr = new Date().toISOString().split('T')[0]
-  const todaySessions = getAllSessions().filter(s => s.date === todayStr)
-  if (todaySessions.length === 0) return 0
-  const allAtt = getAllAttendance()
-  const presentIds = new Set<string>()
-  todaySessions.forEach(ses => {
-    allAtt.filter(a => a.sessionId === ses.id && a.status === 'present').forEach(a => presentIds.add(a.studentId))
-  })
-  return presentIds.size
+  const todaySessions = getAllSessions().filter(s => s.date === today)
+  let count = 0
+  for (const session of todaySessions) {
+    count += getAttendanceForSession(session.id).filter(a => a.status === 'present').length
+  }
+  return count
 }
 
 export function getAbsentTodayCount(): number {
-  const todayStr = new Date().toISOString().split('T')[0]
-  const todaySessions = getAllSessions().filter(s => s.date === todayStr)
-  if (todaySessions.length === 0) return 0
-  const allAtt = getAllAttendance()
-  const absentIds = new Set<string>()
-  const presentIds = new Set<string>()
-  todaySessions.forEach(ses => {
-    allAtt.filter(a => a.sessionId === ses.id).forEach(a => {
-      if (a.status === 'present') presentIds.add(a.studentId)
-      else absentIds.add(a.studentId)
-    })
-  })
-  return Array.from(absentIds).filter(id => !presentIds.has(id)).length
-}
-
-export function getSessionsThisMonth(courseId: string): number {
-  const now = new Date()
-  return getAllSessions().filter(s => {
-    if (s.courseId !== courseId) return false
-    const d = new Date(s.date)
-    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
-  }).length
-}
-
-// Per-student, per-course weekly trend (spec: plan Task 2 line 604)
-export function getWeeklyTrend(studentId: string, courseId: string): WeeklyTrend[] {
-  const now = new Date()
-  const allSessions = getAllSessions()
-  const allAtt = getAllAttendance()
-  return Array.from({ length: 4 }, (_, i) => {
-    const weekStart = new Date(now)
-    weekStart.setDate(weekStart.getDate() - (i + 1) * 7)
-    const weekEnd = new Date(weekStart)
-    weekEnd.setDate(weekEnd.getDate() + 7)
-    const weekSessions = allSessions.filter(s => {
-      if (s.courseId !== courseId) return false
-      const d = new Date(s.date)
-      return d >= weekStart && d < weekEnd
-    })
-    const total = weekSessions.length
-    if (total === 0) return { weekLabel: `W${4 - i}`, rate: 0 }
-    const present = weekSessions.filter(ses =>
-      allAtt.some(a => a.sessionId === ses.id && a.studentId === studentId && a.status === 'present')
-    ).length
-    return { weekLabel: `W${4 - i}`, rate: Math.round((present / total) * 100) }
-  }).reverse()
-}
-
-// Course-wide or school-wide weekly trend (for dashboard use)
-export function getCourseWeeklyTrend(courseId?: string): WeeklyTrend[] {
-  const now = new Date()
-  const allSessions = getAllSessions()
-  const allAtt = getAllAttendance()
-  return Array.from({ length: 4 }, (_, i) => {
-    const weekStart = new Date(now)
-    weekStart.setDate(weekStart.getDate() - (i + 1) * 7)
-    const weekEnd = new Date(weekStart)
-    weekEnd.setDate(weekEnd.getDate() + 7)
-    const weekSessions = allSessions.filter(s => {
-      if (courseId && s.courseId !== courseId) return false
-      const d = new Date(s.date)
-      return d >= weekStart && d < weekEnd
-    })
-    const total = weekSessions.length
-    if (total === 0) return { weekLabel: `W${4 - i}`, rate: 0 }
-    const presentCount = weekSessions.reduce((acc, ses) => {
-      const recs = allAtt.filter(a => a.sessionId === ses.id)
-      const pres = recs.filter(a => a.status === 'present').length
-      return acc + (recs.length > 0 ? pres / recs.length : 0)
-    }, 0)
-    return { weekLabel: `W${4 - i}`, rate: Math.round((presentCount / total) * 100) }
-  }).reverse()
-}
-
-export function getCoursesForStudent(studentId: string): Course[] {
-  return COURSES.filter(c => c.studentIds.includes(studentId))
-}
-
-export function getRecentAttendanceHistory(studentId: string, limit = 10): Array<{ date: string; courseName: string; status: 'present' | 'absent' }> {
-  const allAtt = getAllAttendance()
-  const allSess = getAllSessions()
-  const studentCourses = getCoursesForStudent(studentId)
-  const results: Array<{ date: string; courseName: string; status: 'present' | 'absent' }> = []
-  studentCourses.forEach(course => {
-    const courseSessions = allSess.filter(s => s.courseId === course.id)
-    courseSessions.forEach(ses => {
-      const record = allAtt.find(a => a.sessionId === ses.id && a.studentId === studentId)
-      if (record) {
-        results.push({ date: ses.date, courseName: course.name, status: record.status })
-      }
-    })
-  })
-  return results
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, limit)
-}
-
-export function submitSession(data: {
-  courseId: string; teacherId: string; date: string
-  records: { studentId: string; status: 'present'|'absent' }[]
-}): { success: boolean; error?: string } {
-  const allSessions = getAllSessions()
-  if (allSessions.some(s => s.courseId === data.courseId && s.date === data.date)) {
-    return { success: false, error: 'A session has already been submitted for this course today.' }
+  const todaySessions = getAllSessions().filter(s => s.date === today)
+  let count = 0
+  for (const session of todaySessions) {
+    count += getAttendanceForSession(session.id).filter(a => a.status === 'absent').length
   }
-  const sessionId = `rt-ses-${Date.now()}`
-  runtimeSessions.push({ id: sessionId, courseId: data.courseId, date: data.date, submittedBy: data.teacherId })
-  data.records.forEach((r, i) => {
-    runtimeAttendance.push({ id: `rt-att-${sessionId}-${i}`, sessionId, studentId: r.studentId, status: r.status })
+  return count
+}
+
+// ─── Sessions this month ──────────────────────────────────────────────────────
+
+export function getSessionsThisMonth(classId?: string): number {
+  const now = new Date()
+  const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const sessions = classId ? getSessionsByClass(classId) : getAllSessions()
+  return sessions.filter(s => s.date.startsWith(monthStr)).length
+}
+
+// ─── Critical alerts ──────────────────────────────────────────────────────────
+
+export function getCriticalAlerts(): CriticalAlert[] {
+  const alerts: CriticalAlert[] = []
+  for (const student of STUDENTS) {
+    const sessions = getSessionsByClass(student.classId).sort((a, b) => b.date.localeCompare(a.date))
+    const att = getAllAttendance().filter(a => a.studentId === student.id)
+    let consecutive = 0
+    for (const session of sessions) {
+      const record = att.find(a => a.sessionId === session.id)
+      if (record?.status === 'absent') consecutive++
+      else break
+    }
+    if (consecutive >= 3) {
+      const cls = CLASSES.find(c => c.id === student.classId)!
+      alerts.push({
+        studentId: student.id,
+        studentName: student.name,
+        classId: student.classId,
+        className: cls.name,
+        consecutiveAbsences: consecutive,
+      })
+    }
+  }
+  return alerts
+}
+
+// ─── Courses for student (modules active in student's class) ──────────────────
+
+export function getCoursesForStudent(studentId: string): Module[] {
+  const student = STUDENTS.find(s => s.id === studentId)
+  if (!student) return []
+  const moduleIds = [...new Set(
+    TEACHER_MODULE_ASSIGNMENTS
+      .filter(a => a.classId === student.classId)
+      .map(a => a.moduleId)
+  )]
+  return MODULES.filter(m => moduleIds.includes(m.id))
+}
+
+// ─── Students for module ──────────────────────────────────────────────────────
+
+export function getStudentsForModule(moduleId: string): Student[] {
+  const classIds = [...new Set(
+    TEACHER_MODULE_ASSIGNMENTS.filter(a => a.moduleId === moduleId).map(a => a.classId)
+  )]
+  return STUDENTS.filter(s => classIds.includes(s.classId))
+}
+
+// ─── Recent attendance history ────────────────────────────────────────────────
+
+export function getRecentAttendanceHistory(studentId: string, limit = 10): { date: string; moduleName: string; status: 'present' | 'absent' }[] {
+  const student = STUDENTS.find(s => s.id === studentId)
+  if (!student) return []
+  const sessions = getSessionsByClass(student.classId).sort((a, b) => b.date.localeCompare(a.date))
+  const results: { date: string; moduleName: string; status: 'present' | 'absent' }[] = []
+  for (const session of sessions) {
+    const record = getAllAttendance().find(a => a.sessionId === session.id && a.studentId === studentId)
+    if (record) {
+      const mod = MODULES.find(m => m.id === session.moduleId)
+      results.push({ date: session.date, moduleName: mod?.name ?? 'Unknown Module', status: record.status })
+    }
+    if (results.length >= limit) break
+  }
+  return results
+}
+
+// ─── Weekly trend ─────────────────────────────────────────────────────────────
+
+export function getWeeklyTrend(studentId: string, classId?: string): WeeklyTrend[] {
+  const student = STUDENTS.find(s => s.id === studentId)
+  if (!student) return []
+  const targetClassId = classId ?? student.classId
+  const sessions = getSessionsByClass(targetClassId).sort((a, b) => a.date.localeCompare(b.date))
+  const weekMap: Record<string, { present: number; total: number }> = {}
+  for (const session of sessions) {
+    const week = session.date.substring(0, 7)
+    if (!weekMap[week]) weekMap[week] = { present: 0, total: 0 }
+    const record = getAllAttendance().find(a => a.sessionId === session.id && a.studentId === studentId)
+    if (record) {
+      weekMap[week].total++
+      if (record.status === 'present') weekMap[week].present++
+    }
+  }
+  return Object.entries(weekMap).map(([week, { present, total }]) => ({
+    week,
+    rate: total > 0 ? Math.round((present / total) * 100) : 0,
+  }))
+}
+
+export function getCourseWeeklyTrend(classId?: string): WeeklyTrend[] {
+  const sessions = classId ? getSessionsByClass(classId) : getAllSessions()
+  const sorted = sessions.sort((a, b) => a.date.localeCompare(b.date))
+  const weekMap: Record<string, { present: number; total: number }> = {}
+  for (const session of sorted) {
+    const week = session.date.substring(0, 7)
+    if (!weekMap[week]) weekMap[week] = { present: 0, total: 0 }
+    const att = getAttendanceForSession(session.id)
+    weekMap[week].present += att.filter(a => a.status === 'present').length
+    weekMap[week].total += att.length
+  }
+  return Object.entries(weekMap).map(([week, { present, total }]) => ({
+    week,
+    rate: total > 0 ? Math.round((present / total) * 100) : 0,
+  }))
+}
+
+// ─── Submit session ───────────────────────────────────────────────────────────
+
+export function submitSession(params: {
+  classId: string
+  moduleId: string
+  teacherId: string
+  date: string
+  records: { studentId: string; status: 'present' | 'absent' }[]
+}): { success: boolean; error?: string } {
+  const existing = getAllSessions().find(
+    s => s.classId === params.classId && s.date === params.date && s.moduleId === params.moduleId
+  )
+  if (existing) return { success: false, error: 'A session for this class and module already exists on this date.' }
+  const sessionId = `rt-${Date.now()}`
+  runtimeSessions.push({ id: sessionId, classId: params.classId, moduleId: params.moduleId, teacherId: params.teacherId, date: params.date })
+  params.records.forEach((r, i) => {
+    runtimeAttendance.push({ id: `rta-${sessionId}-${i}`, sessionId, studentId: r.studentId, status: r.status })
   })
   return { success: true }
 }
