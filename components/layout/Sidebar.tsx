@@ -1,14 +1,17 @@
 'use client'
 import Link from 'next/link'
-import { House, BookOpen, Users, ChartBar, SignOut } from '@phosphor-icons/react'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
+import {
+  SquaresFour, BookOpen, Users, ChartBar,
+  Question, SignOut, GraduationCap
+} from '@phosphor-icons/react'
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', Icon: House },
-  { href: '/courses',   label: 'Courses',   Icon: BookOpen },
-  { href: '/students',  label: 'Students',  Icon: Users },
-  { href: '/reports',   label: 'Reports',   Icon: ChartBar },
+  { href: '/dashboard', label: 'Dashboard',  Icon: SquaresFour },
+  { href: '/courses',   label: 'Courses',    Icon: BookOpen },
+  { href: '/students',  label: 'Students',   Icon: Users },
+  { href: '/reports',   label: 'Reports',    Icon: ChartBar },
 ]
 
 export default function Sidebar({ currentPath }: { currentPath: string }) {
@@ -16,29 +19,58 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
   const router = useRouter()
 
   return (
-    <aside className="w-56 min-h-[100dvh] bg-surface-container-low flex flex-col py-6 px-3 border-r border-outline-variant/10">
-      <div className="px-3 mb-8">
-        <p className="text-[10px] font-label text-on-surface-variant uppercase tracking-widest">Institution</p>
-        <p className="text-sm font-headline font-bold text-on-surface mt-0.5">Elite Academy</p>
+    <aside className="fixed left-0 h-full w-64 bg-background flex flex-col py-8 px-4 gap-y-6 z-40">
+      {/* Logo */}
+      <div className="flex items-center gap-3 px-2 mb-4">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dim flex items-center justify-center shadow-lg shadow-primary/20">
+          <GraduationCap size={22} weight="fill" className="text-on-primary" />
+        </div>
+        <div>
+          <h1 className="text-lg font-black text-primary leading-none font-headline">Institution</h1>
+          <p className="text-xs text-on-surface-variant font-label">Elite Academy</p>
+        </div>
       </div>
-      <nav className="flex flex-col gap-1 flex-1">
+
+      {/* Nav */}
+      <nav className="flex-1 space-y-1">
         {navItems.map(({ href, label, Icon }) => {
-          const active = currentPath.startsWith(href)
+          const active = currentPath === href || (href !== '/dashboard' && currentPath.startsWith(href))
           return (
             <Link key={href} href={href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors duration-200
-                ${active ? 'bg-surface-container-highest text-primary' : 'text-on-surface-variant hover:bg-surface-container hover:text-on-surface'}`}>
-              <Icon size={18} weight={active ? 'fill' : 'regular'} />
-              <span className="text-sm font-label font-medium">{label}</span>
+              className={`flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200
+                ${active
+                  ? 'text-primary border-r-2 border-primary bg-primary/5 translate-x-px'
+                  : 'text-on-surface-variant hover:text-on-surface hover:bg-white/5'}`}>
+              <Icon size={20} weight={active ? 'fill' : 'regular'} />
+              <span className="font-label">{label}</span>
             </Link>
           )
         })}
       </nav>
-      <button onClick={() => { logout(); router.push('/login') }}
-        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-on-surface-variant hover:text-tertiary hover:bg-surface-container transition-colors duration-200">
-        <SignOut size={18} />
-        <span className="text-sm font-label font-medium">Sign Out</span>
-      </button>
+
+      {/* Bottom */}
+      <div className="mt-auto space-y-1 border-t border-outline-variant/10 pt-6">
+        <Link href="#"
+          className="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-colors text-sm">
+          <Question size={20} />
+          <span className="font-label">Help Center</span>
+        </Link>
+        <button onClick={() => { logout(); router.push('/login') }}
+          className="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-tertiary hover:bg-white/5 transition-colors text-sm">
+          <SignOut size={20} />
+          <span className="font-label text-sm">Sign Out</span>
+        </button>
+        {/* User profile */}
+        <div className="flex items-center gap-3 px-4 py-3 mt-2">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-primary-dim/20 border border-primary/20 flex items-center justify-center text-sm font-headline font-bold text-primary shrink-0">
+            JV
+          </div>
+          <div className="overflow-hidden">
+            <p className="text-sm font-semibold truncate text-on-surface">Dr. Julian Vance</p>
+            <p className="text-[10px] text-on-surface-variant uppercase tracking-widest">Admin</p>
+          </div>
+        </div>
+      </div>
     </aside>
   )
 }
