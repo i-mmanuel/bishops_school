@@ -1,10 +1,8 @@
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useAuth } from '@/lib/auth-context'
-import { useRouter } from 'next/navigation'
 import {
-  SquaresFour, BookOpen, Users, SignOut, GraduationCap, ChalkboardTeacher
+  SquaresFour, BookOpen, Users, GraduationCap, ChalkboardTeacher
 } from '@phosphor-icons/react'
 
 const navItems = [
@@ -15,9 +13,6 @@ const navItems = [
 ]
 
 export default function Sidebar({ currentPath }: { currentPath: string }) {
-  const { logout } = useAuth()
-  const router = useRouter()
-
   return (
     <aside className="fixed left-0 h-full w-64 flex flex-col py-8 px-4 gap-y-6 z-40 border-r border-white/5"
       style={{ background: 'linear-gradient(160deg, rgba(14,22,46,0.98) 0%, rgba(6,14,32,0.99) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
@@ -49,14 +44,9 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
       </nav>
 
       {/* Bottom */}
-      <div className="mt-auto space-y-1 border-t border-outline-variant/10 pt-6">
-        <button onClick={() => { logout(); router.push('/login') }}
-          className="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-tertiary hover:bg-white/5 transition-colors text-sm">
-          <SignOut size={20} />
-          <span className="font-label text-sm">Sign Out</span>
-        </button>
+      <div className="mt-auto border-t border-outline-variant/10 pt-6">
         {/* User profile */}
-        <div className="flex items-center gap-3 px-4 py-3 mt-2">
+        <div className="flex items-center gap-3 px-4 py-3">
           <div className="w-10 h-10 rounded-full overflow-hidden border border-primary/20 shrink-0">
             <Image
               src="https://i.pravatar.cc/80?u=principal-julian"
@@ -72,6 +62,7 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
           </div>
         </div>
       </div>
+
     </aside>
   )
 }
