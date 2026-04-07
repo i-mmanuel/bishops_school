@@ -39,37 +39,37 @@ export const PRINCIPAL: Principal = {
 
 export const STUDENTS: Student[] = [
   // Makarios class (cls1)
-  { id: 's1',  name: 'Kofi Asante',       classId: 'cls1', churchId: 'ch1' },
-  { id: 's2',  name: 'Abena Mensah',      classId: 'cls1', churchId: 'ch5' },
-  { id: 's3',  name: 'Emmanuel Boateng',  classId: 'cls1', churchId: 'ch2' },
-  { id: 's4',  name: 'Akua Adjei',        classId: 'cls1', churchId: 'ch6' },
-  { id: 's5',  name: 'Daniel Owusu',      classId: 'cls1', churchId: 'ch1' },
-  { id: 's6',  name: 'Priscilla Frimpong',classId: 'cls1', churchId: 'ch7' },
-  { id: 's7',  name: 'Samuel Darko',      classId: 'cls1', churchId: 'ch3' },
-  { id: 's8',  name: 'Ama Kusi',          classId: 'cls1', churchId: 'ch5' },
-  { id: 's9',  name: 'Benjamin Appiah',   classId: 'cls1', churchId: 'ch4' },
-  { id: 's10', name: 'Esther Amoah',      classId: 'cls1', churchId: 'ch8' },
-  { id: 's11', name: 'Joshua Tetteh',     classId: 'cls1', churchId: 'ch2' },
-  { id: 's12', name: 'Rebecca Asiedu',    classId: 'cls1', churchId: 'ch6' },
-  { id: 's13', name: 'Michael Ofori',     classId: 'cls1', churchId: 'ch1' },
-  { id: 's14', name: 'Comfort Boadu',     classId: 'cls1', churchId: 'ch7' },
-  { id: 's15', name: 'Isaac Acheampong',  classId: 'cls1', churchId: 'ch3' },
+  { id: 's1',  name: 'Kofi Asante',       classId: 'cls1', churchId: 'ch1', gender: 'male'   },
+  { id: 's2',  name: 'Abena Mensah',      classId: 'cls1', churchId: 'ch5', gender: 'female' },
+  { id: 's3',  name: 'Emmanuel Boateng',  classId: 'cls1', churchId: 'ch2', gender: 'male'   },
+  { id: 's4',  name: 'Akua Adjei',        classId: 'cls1', churchId: 'ch6', gender: 'female' },
+  { id: 's5',  name: 'Daniel Owusu',      classId: 'cls1', churchId: 'ch1', gender: 'male'   },
+  { id: 's6',  name: 'Priscilla Frimpong',classId: 'cls1', churchId: 'ch7', gender: 'female' },
+  { id: 's7',  name: 'Samuel Darko',      classId: 'cls1', churchId: 'ch3', gender: 'male'   },
+  { id: 's8',  name: 'Ama Kusi',          classId: 'cls1', churchId: 'ch5', gender: 'female' },
+  { id: 's9',  name: 'Benjamin Appiah',   classId: 'cls1', churchId: 'ch4', gender: 'male'   },
+  { id: 's10', name: 'Esther Amoah',      classId: 'cls1', churchId: 'ch8', gender: 'female' },
+  { id: 's11', name: 'Joshua Tetteh',     classId: 'cls1', churchId: 'ch2', gender: 'male'   },
+  { id: 's12', name: 'Rebecca Asiedu',    classId: 'cls1', churchId: 'ch6', gender: 'female' },
+  { id: 's13', name: 'Michael Ofori',     classId: 'cls1', churchId: 'ch1', gender: 'male'   },
+  { id: 's14', name: 'Comfort Boadu',     classId: 'cls1', churchId: 'ch7', gender: 'female' },
+  { id: 's15', name: 'Isaac Acheampong',  classId: 'cls1', churchId: 'ch3', gender: 'male'   },
   // Poimen class (cls2)
-  { id: 's16', name: 'Elizabeth Nkrumah', classId: 'cls2', churchId: 'ch8' },
-  { id: 's17', name: 'Peter Amponsah',    classId: 'cls2', churchId: 'ch4' },
-  { id: 's18', name: 'Mary Sarpong',      classId: 'cls2', churchId: 'ch5' },
-  { id: 's19', name: 'John Addae',        classId: 'cls2', churchId: 'ch2' },
-  { id: 's20', name: 'Vivian Yeboah',     classId: 'cls2', churchId: 'ch6' },
-  { id: 's21', name: 'Philip Mensah',     classId: 'cls2', churchId: 'ch3' },
-  { id: 's22', name: 'Felicia Owusu',     classId: 'cls2', churchId: 'ch7' },
-  { id: 's23', name: 'Stephen Kumi',      classId: 'cls2', churchId: 'ch1' },
-  { id: 's24', name: 'Cynthia Mensah',    classId: 'cls2', churchId: 'ch8' },
-  { id: 's25', name: 'George Boateng',    classId: 'cls2', churchId: 'ch4' },
-  { id: 's26', name: 'Patricia Adjei',    classId: 'cls2', churchId: 'ch5' },
-  { id: 's27', name: 'Andrew Frimpong',   classId: 'cls2', churchId: 'ch2' },
-  { id: 's28', name: 'Irene Darko',       classId: 'cls2', churchId: 'ch6' },
-  { id: 's29', name: 'Solomon Kusi',      classId: 'cls2', churchId: 'ch1' },
-  { id: 's30', name: 'Joanna Appiah',     classId: 'cls2', churchId: 'ch7' },
+  { id: 's16', name: 'Elizabeth Nkrumah', classId: 'cls2', churchId: 'ch8', gender: 'female' },
+  { id: 's17', name: 'Peter Amponsah',    classId: 'cls2', churchId: 'ch4', gender: 'male'   },
+  { id: 's18', name: 'Mary Sarpong',      classId: 'cls2', churchId: 'ch5', gender: 'female' },
+  { id: 's19', name: 'John Addae',        classId: 'cls2', churchId: 'ch2', gender: 'male'   },
+  { id: 's20', name: 'Vivian Yeboah',     classId: 'cls2', churchId: 'ch6', gender: 'female' },
+  { id: 's21', name: 'Philip Mensah',     classId: 'cls2', churchId: 'ch3', gender: 'male'   },
+  { id: 's22', name: 'Felicia Owusu',     classId: 'cls2', churchId: 'ch7', gender: 'female' },
+  { id: 's23', name: 'Stephen Kumi',      classId: 'cls2', churchId: 'ch1', gender: 'male'   },
+  { id: 's24', name: 'Cynthia Mensah',    classId: 'cls2', churchId: 'ch8', gender: 'female' },
+  { id: 's25', name: 'George Boateng',    classId: 'cls2', churchId: 'ch4', gender: 'male'   },
+  { id: 's26', name: 'Patricia Adjei',    classId: 'cls2', churchId: 'ch5', gender: 'female' },
+  { id: 's27', name: 'Andrew Frimpong',   classId: 'cls2', churchId: 'ch2', gender: 'male'   },
+  { id: 's28', name: 'Irene Darko',       classId: 'cls2', churchId: 'ch6', gender: 'female' },
+  { id: 's29', name: 'Solomon Kusi',      classId: 'cls2', churchId: 'ch1', gender: 'male'   },
+  { id: 's30', name: 'Joanna Appiah',     classId: 'cls2', churchId: 'ch7', gender: 'female' },
 ]
 
 export const MODULES: Module[] = [
@@ -245,24 +245,24 @@ function daysAgo(n: number): string {
 // ─── Sessions ─────────────────────────────────────────────────────────────────
 
 export const SESSIONS: Session[] = [
-  // Makarios class (cls1)
-  { id: 'ses1',  classId: 'cls1', moduleId: 'm1', teacherId: 't1', date: daysAgo(28) },
-  { id: 'ses2',  classId: 'cls1', moduleId: 'm1', teacherId: 't1', date: daysAgo(21) },
-  { id: 'ses3',  classId: 'cls1', moduleId: 'm2', teacherId: 't3', date: daysAgo(20) },
-  { id: 'ses4',  classId: 'cls1', moduleId: 'm2', teacherId: 't3', date: daysAgo(14) },
-  { id: 'ses5',  classId: 'cls1', moduleId: 'm3', teacherId: 't2', date: daysAgo(13) },
-  { id: 'ses6',  classId: 'cls1', moduleId: 'm1', teacherId: 't1', date: daysAgo(7)  },
-  { id: 'ses7',  classId: 'cls1', moduleId: 'm2', teacherId: 't3', date: daysAgo(3)  },
-  { id: 'ses8',  classId: 'cls1', moduleId: 'm3', teacherId: 't2', date: today       },
+  // Makarios class (cls1) — topics progress in order per module per class
+  { id: 'ses1',  classId: 'cls1', moduleId: 'm1', teacherId: 't1', date: daysAgo(28), topicIndex: 0 },
+  { id: 'ses2',  classId: 'cls1', moduleId: 'm1', teacherId: 't1', date: daysAgo(21), topicIndex: 1 },
+  { id: 'ses3',  classId: 'cls1', moduleId: 'm2', teacherId: 't3', date: daysAgo(20), topicIndex: 0 },
+  { id: 'ses4',  classId: 'cls1', moduleId: 'm2', teacherId: 't3', date: daysAgo(14), topicIndex: 1 },
+  { id: 'ses5',  classId: 'cls1', moduleId: 'm3', teacherId: 't2', date: daysAgo(13), topicIndex: 0 },
+  { id: 'ses6',  classId: 'cls1', moduleId: 'm1', teacherId: 't1', date: daysAgo(7),  topicIndex: 2 },
+  { id: 'ses7',  classId: 'cls1', moduleId: 'm2', teacherId: 't3', date: daysAgo(3),  topicIndex: 2 },
+  { id: 'ses8',  classId: 'cls1', moduleId: 'm3', teacherId: 't2', date: today,        topicIndex: 1 },
   // Poimen class (cls2)
-  { id: 'ses9',  classId: 'cls2', moduleId: 'm1', teacherId: 't2', date: daysAgo(27) },
-  { id: 'ses10', classId: 'cls2', moduleId: 'm2', teacherId: 't4', date: daysAgo(20) },
-  { id: 'ses11', classId: 'cls2', moduleId: 'm1', teacherId: 't2', date: daysAgo(18) },
-  { id: 'ses12', classId: 'cls2', moduleId: 'm3', teacherId: 't1', date: daysAgo(13) },
-  { id: 'ses13', classId: 'cls2', moduleId: 'm2', teacherId: 't4', date: daysAgo(11) },
-  { id: 'ses14', classId: 'cls2', moduleId: 'm1', teacherId: 't2', date: daysAgo(6)  },
-  { id: 'ses15', classId: 'cls2', moduleId: 'm3', teacherId: 't1', date: daysAgo(2)  },
-  { id: 'ses16', classId: 'cls2', moduleId: 'm4', teacherId: 't3', date: today       },
+  { id: 'ses9',  classId: 'cls2', moduleId: 'm1', teacherId: 't2', date: daysAgo(27), topicIndex: 0 },
+  { id: 'ses10', classId: 'cls2', moduleId: 'm2', teacherId: 't4', date: daysAgo(20), topicIndex: 0 },
+  { id: 'ses11', classId: 'cls2', moduleId: 'm1', teacherId: 't2', date: daysAgo(18), topicIndex: 1 },
+  { id: 'ses12', classId: 'cls2', moduleId: 'm3', teacherId: 't1', date: daysAgo(13), topicIndex: 0 },
+  { id: 'ses13', classId: 'cls2', moduleId: 'm2', teacherId: 't4', date: daysAgo(11), topicIndex: 1 },
+  { id: 'ses14', classId: 'cls2', moduleId: 'm1', teacherId: 't2', date: daysAgo(6),  topicIndex: 2 },
+  { id: 'ses15', classId: 'cls2', moduleId: 'm3', teacherId: 't1', date: daysAgo(2),  topicIndex: 1 },
+  { id: 'ses16', classId: 'cls2', moduleId: 'm4', teacherId: 't3', date: today,        topicIndex: 0 },
 ]
 
 // ─── Attendance ───────────────────────────────────────────────────────────────
@@ -317,6 +317,12 @@ const runtimeSessions: Session[] = []
 const runtimeAttendance: Attendance[] = []
 
 // ─── Query Functions ──────────────────────────────────────────────────────────
+
+// ─── Avatar helper ────────────────────────────────────────────────────────────
+
+export function getStudentAvatarUrl(studentId: string): string {
+  return `https://i.pravatar.cc/80?u=${studentId}`
+}
 
 export function getDenominations(): Denomination[] { return DENOMINATIONS }
 export function getChurches(): Church[] { return CHURCHES }
@@ -400,6 +406,15 @@ export function getModuleAttendanceRate(moduleId: string): number {
 }
 // backward compat
 export function getCourseAverageAttendance(id: string): number { return getModuleAttendanceRate(id) }
+
+// Module completion rate: % of topics that have been taught at least once
+export function getModuleCompletionRate(moduleId: string): number {
+  const mod = MODULES.find(m => m.id === moduleId)
+  if (!mod || mod.topics.length === 0) return 0
+  const sessions = getAllSessions().filter(s => s.moduleId === moduleId)
+  const coveredIndices = new Set(sessions.map(s => s.topicIndex))
+  return Math.round((coveredIndices.size / mod.topics.length) * 100)
+}
 
 // Institution-wide attendance rate
 export function getInstitutionHealth(): number {
@@ -599,14 +614,16 @@ export function submitSession(params: {
   moduleId: string
   teacherId: string
   date: string
+  topicIndex: number
   records: { studentId: string; status: 'present' | 'absent'; participationLevel?: 1 | 2 | 3 | 4 }[]
 }): { success: boolean; error?: string } {
   const existing = getAllSessions().find(
-    s => s.classId === params.classId && s.date === params.date && s.moduleId === params.moduleId
+    s => s.classId === params.classId && s.date === params.date &&
+         s.moduleId === params.moduleId && s.topicIndex === params.topicIndex
   )
-  if (existing) return { success: false, error: 'A session for this class and module already exists on this date.' }
+  if (existing) return { success: false, error: 'Attendance for this topic in this class has already been recorded today.' }
   const sessionId = `rt-${Date.now()}`
-  runtimeSessions.push({ id: sessionId, classId: params.classId, moduleId: params.moduleId, teacherId: params.teacherId, date: params.date })
+  runtimeSessions.push({ id: sessionId, classId: params.classId, moduleId: params.moduleId, teacherId: params.teacherId, date: params.date, topicIndex: params.topicIndex })
   params.records.forEach((r, i) => {
     runtimeAttendance.push({
       id: `rta-${sessionId}-${i}`,
