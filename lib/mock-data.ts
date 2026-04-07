@@ -215,6 +215,11 @@ export function getAllTeachers(): Teacher[] { return TEACHERS }
 export function getAllStudents(): Student[] { return STUDENTS }
 export function getAllCourses(): Course[]   { return COURSES }
 
+// ─── Aliases expected by downstream tasks ────────────────────────────────────
+export function getTeachers(): Teacher[] { return TEACHERS }
+export function getStudents(): Student[] { return STUDENTS }
+export function getCourses(): Course[]   { return COURSES }
+
 export function getAllSessions(): Session[] {
   return [...SESSIONS, ...runtimeSessions]
 }
@@ -240,9 +245,12 @@ export function getStudentsByCourse(courseId: string): Student[] {
   if (!course) return []
   return course.studentIds.map(id => STUDENTS.find(s => s.id === id)!).filter(Boolean)
 }
+export function getStudentsForCourse(courseId: string): Student[] { return getStudentsByCourse(courseId) }
+
 export function getSessionsByCourse(courseId: string): Session[] {
   return [...SESSIONS, ...runtimeSessions].filter(s => s.courseId === courseId)
 }
+export function getSessionsForCourse(courseId: string): Session[] { return getSessionsByCourse(courseId) }
 export function getAttendanceForSession(sessionId: string): Attendance[] {
   return getAllAttendance().filter(a => a.sessionId === sessionId)
 }
@@ -263,20 +271,21 @@ export function getAttendanceRate(studentId: string, courseId: string): Attendan
     const record = allAtt.find(a => a.sessionId === ses.id && a.studentId === studentId)
     return acc + (record?.status === 'present' ? 1 : 0)
   }, 0)
-  return { studentId, courseId, rate: present / total, present, total }
+  return { studentId, courseId, rate: Math.round((present / total) * 100), present, total }
 }
 
 export function getCourseAttendanceAverage(courseId: string): number {
   const course = getCourseById(courseId)
   if (!course || course.studentIds.length === 0) return 0
   const rates = course.studentIds.map(sid => getAttendanceRate(sid, courseId).rate)
-  return rates.reduce((a, b) => a + b, 0) / rates.length
+  return Math.round(rates.reduce((a, b) => a + b, 0) / rates.length)
 }
+export function getCourseAverageAttendance(courseId: string): number { return getCourseAttendanceAverage(courseId) }
 
 export function getInstitutionHealth(): number {
   const rates = COURSES.map(c => getCourseAttendanceAverage(c.id))
   if (rates.length === 0) return 0
-  return rates.reduce((a, b) => a + b, 0) / rates.length
+  return Math.round(rates.reduce((a, b) => a + b, 0) / rates.length)
 }
 
 export function getSchoolwideAttendanceRate(): number {
@@ -288,7 +297,7 @@ export function getCriticalAlerts(): CriticalAlert[] {
   COURSES.forEach(course => {
     course.studentIds.forEach(sid => {
       const { rate } = getAttendanceRate(sid, course.id)
-      if (rate < 0.7) {
+      if (rate < 70) {
         const student = getStudentById(sid)
         if (student) alerts.push({ studentId: sid, studentName: student.name, courseId: course.id, courseName: course.name, rate })
       }
@@ -356,7 +365,7 @@ export function getWeeklyTrend(courseId?: string): WeeklyTrend[] {
       const totalInSession = sessionRecords.length
       return acc + (totalInSession > 0 ? presentInSession / totalInSession : 0)
     }, 0)
-    return { weekLabel: `W${4 - i}`, rate: presentCount / total }
+    return { weekLabel: `W${4 - i}`, rate: Math.round((presentCount / total) * 100) }
   }).reverse()
 }
 
@@ -364,16 +373,23 @@ export function getCoursesForStudent(studentId: string): Course[] {
   return COURSES.filter(c => c.studentIds.includes(studentId))
 }
 
-export function getRecentAttendanceHistory(studentId: string, courseId: string): Array<{ date: string; status: 'present' | 'absent' }> {
-  const sessions = getSessionsByCourse(courseId)
+export function getRecentAttendanceHistory(studentId: string, limit = 10): Array<{ date: string; courseName: string; status: 'present' | 'absent' }> {
   const allAtt = getAllAttendance()
-  return sessions
-    .map(ses => {
+  const allSess = getAllSessions()
+  const studentCourses = getCoursesForStudent(studentId)
+  const results: Array<{ date: string; courseName: string; status: 'present' | 'absent' }> = []
+  studentCourses.forEach(course => {
+    const courseSessions = allSess.filter(s => s.courseId === course.id)
+    courseSessions.forEach(ses => {
       const record = allAtt.find(a => a.sessionId === ses.id && a.studentId === studentId)
-      return record ? { date: ses.date, status: record.status } : null
+      if (record) {
+        results.push({ date: ses.date, courseName: course.name, status: record.status })
+      }
     })
-    .filter((r): r is { date: string; status: 'present' | 'absent' } => r !== null)
+  })
+  return results
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, limit)
 }
 
 export function submitSession(data: {
