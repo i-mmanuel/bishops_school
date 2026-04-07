@@ -59,33 +59,6 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-          {/* Attendance per module */}
-          <section className="space-y-4">
-            <h2 className="text-lg font-bold font-headline">Attendance by Module</h2>
-            <div className="space-y-3">
-              {modules.map((mod, idx) => {
-                const rate = getModuleAttendanceRate(mod.id)
-                const { text, bar } = rateColor(rate)
-                const accent = ['text-primary', 'text-secondary', 'text-tertiary', 'text-on-surface-variant'][idx % 4]
-                return (
-                  <div key={mod.id} className="p-4 rounded-xl space-y-2"
-                    style={{ background: 'rgba(25,37,64,0.4)', border: '0.5px solid rgba(109,117,140,0.12)' }}>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <p className="text-sm font-semibold font-label text-on-surface">{mod.name}</p>
-                        <p className={`text-[10px] font-bold uppercase tracking-widest font-label ${accent}`}>{mod.code}</p>
-                      </div>
-                      <span className={`text-xl font-black font-headline ${text}`}>{rate}%</span>
-                    </div>
-                    <div className="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full ${bar}`} style={{ width: `${rate}%` }} />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </section>
-
           {/* Teacher performance */}
           <section className="space-y-4">
             <h2 className="text-lg font-bold font-headline">Instructor Performance</h2>
@@ -104,6 +77,33 @@ export default function DashboardPage() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-on-surface truncate">{teacher.name}</p>
                         <p className={`text-[10px] font-label ${text}`}>{label}</p>
+                      </div>
+                      <span className={`text-xl font-black font-headline ${text}`}>{rate}%</span>
+                    </div>
+                    <div className="h-1.5 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${bar}`} style={{ width: `${rate}%` }} />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+
+          {/* Attendance per module */}
+          <section className="space-y-4">
+            <h2 className="text-lg font-bold font-headline">Attendance by Module</h2>
+            <div className="space-y-3">
+              {modules.map((mod, idx) => {
+                const rate = getModuleAttendanceRate(mod.id)
+                const { text, bar } = rateColor(rate)
+                const accent = ['text-primary', 'text-secondary', 'text-tertiary', 'text-on-surface-variant'][idx % 4]
+                return (
+                  <div key={mod.id} className="p-4 rounded-xl space-y-2"
+                    style={{ background: 'rgba(25,37,64,0.4)', border: '0.5px solid rgba(109,117,140,0.12)' }}>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-sm font-semibold font-label text-on-surface">{mod.name}</p>
+                        <p className={`text-[10px] font-bold uppercase tracking-widest font-label ${accent}`}>{mod.code}</p>
                       </div>
                       <span className={`text-xl font-black font-headline ${text}`}>{rate}%</span>
                     </div>
