@@ -1,6 +1,9 @@
 'use client'
 import { useState, useMemo } from 'react'
-import { getTeachers, getTeacherModuleAssignments, getStudentsByClass, getModuleById, getClassById, submitSession } from '@/lib/mock-data'
+import {
+  getTeachers, getTeacherModuleAssignments, getStudentsByClass,
+  getClassById, submitSession
+} from '@/lib/mock-data'
 import type { Student } from '@/lib/types'
 import StudentToggleList from '@/components/attend/StudentToggleList'
 import SuccessScreen from '@/components/attend/SuccessScreen'
@@ -10,39 +13,38 @@ export default function AttendPage() {
   const allAssignments = getTeacherModuleAssignments()
 
   const [teacherId, setTeacherId] = useState('')
-  const [assignmentId, setAssignmentId] = useState('')
+  const [classId, setClassId] = useState('')
   const [statuses, setStatuses] = useState<Record<string, 'present' | 'absent'>>({})
   const [error, setError] = useState('')
   const [submitted, setSubmitted] = useState(false)
-  const [submittedModuleName, setSubmittedModuleName] = useState('')
+  const [submittedClassName, setSubmittedClassName] = useState('')
 
-  const teacherAssignments = useMemo(
-    () => (teacherId ? allAssignments.filter(a => a.teacherId === teacherId) : []),
-    [teacherId, allAssignments]
-  )
-
-  const selectedAssignment = teacherAssignments.find(a => a.id === assignmentId)
+  // Unique classes this teacher is assigned to
+  const teacherClasses = useMemo(() => {
+    if (!teacherId) return []
+    const classIds = Array.from(new Set(
+      allAssignments.filter(a => a.teacherId === teacherId).map(a => a.classId)
+    ))
+    return classIds.map(id => getClassById(id)).filter(Boolean) as NonNullable<ReturnType<typeof getClassById>>[]
+  }, [teacherId, allAssignments])
 
   const students: Student[] = useMemo(() => {
-    if (!selectedAssignment) return []
-    return getStudentsByClass(selectedAssignment.classId)
-  }, [selectedAssignment])
+    if (!classId) return []
+    return getStudentsByClass(classId)
+  }, [classId])
 
   function handleTeacherChange(id: string) {
     setTeacherId(id)
-    setAssignmentId('')
+    setClassId('')
     setStatuses({})
     setError('')
   }
 
-  function handleAssignmentChange(id: string) {
-    setAssignmentId(id)
+  function handleClassChange(id: string) {
+    setClassId(id)
     setError('')
-    const assignment = teacherAssignments.find(a => a.id === id)
-    if (assignment) {
-      const s = getStudentsByClass(assignment.classId)
-      setStatuses(Object.fromEntries(s.map(st => [st.id, 'present'])))
-    }
+    const s = getStudentsByClass(id)
+    setStatuses(Object.fromEntries(s.map(st => [st.id, 'present'])))
   }
 
   function toggleStudent(studentId: string) {
@@ -50,33 +52,36 @@ export default function AttendPage() {
   }
 
   function handleSubmit() {
-    if (!teacherId || !selectedAssignment) return
+    if (!teacherId || !classId) return
+    // Derive moduleId from first assignment for this teacher+class
+    const assignment = allAssignments.find(a => a.teacherId === teacherId && a.classId === classId)
+    if (!assignment) { setError('No module assignment found.'); return }
     const today = new Date().toISOString().split('T')[0]
     const result = submitSession({
-      classId: selectedAssignment.classId,
-      moduleId: selectedAssignment.moduleId,
+      classId,
+      moduleId: assignment.moduleId,
       teacherId,
       date: today,
       records: students.map(s => ({ studentId: s.id, status: statuses[s.id] ?? 'present' })),
     })
     if (!result.success) { setError(result.error ?? 'Submission failed.'); return }
-    const mod = getModuleById(selectedAssignment.moduleId)
-    setSubmittedModuleName(mod?.name ?? '')
+    const cls = getClassById(classId)
+    setSubmittedClassName(cls?.name ?? '')
     setSubmitted(true)
   }
 
   function handleSubmitAnother() {
-    setAssignmentId('')
+    setClassId('')
     setStatuses({})
     setError('')
     setSubmitted(false)
-    setSubmittedModuleName('')
+    setSubmittedClassName('')
   }
 
   const teacher = teachers.find(t => t.id === teacherId)
 
   if (submitted) {
-    return <SuccessScreen teacherName={teacher?.name ?? ''} courseName={submittedModuleName} onSubmitAnother={handleSubmitAnother} />
+    return <SuccessScreen teacherName={teacher?.name ?? ''} courseName={submittedClassName} onSubmitAnother={handleSubmitAnother} />
   }
 
   const presentCount = Object.values(statuses).filter(s => s === 'present').length
@@ -91,32 +96,30 @@ export default function AttendPage() {
 
       {/* Teacher selector */}
       <div className="flex flex-col gap-1.5 mb-4">
-        <label className="text-xs font-label text-on-surface-variant uppercase tracking-wider">Teacher</label>
+        <label className="text-xs font-label text-on-surface-variant uppercase tracking-wider">Instructor</label>
         <select
           value={teacherId}
           onChange={e => handleTeacherChange(e.target.value)}
           className="bg-surface-container-lowest border border-outline-variant/40 rounded-xl px-4 py-3 text-sm font-label text-on-surface outline-none focus:border-primary transition-all duration-200 appearance-none"
         >
-          <option value="">Select teacher…</option>
+          <option value="">Select instructor…</option>
           {teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
         </select>
       </div>
 
-      {/* Class + Module selector */}
+      {/* Class selector */}
       <div className="flex flex-col gap-1.5 mb-6">
-        <label className="text-xs font-label text-on-surface-variant uppercase tracking-wider">Class &amp; Module</label>
+        <label className="text-xs font-label text-on-surface-variant uppercase tracking-wider">Class</label>
         <select
-          value={assignmentId}
-          onChange={e => handleAssignmentChange(e.target.value)}
+          value={classId}
+          onChange={e => handleClassChange(e.target.value)}
           disabled={!teacherId}
           className="bg-surface-container-lowest border border-outline-variant/40 rounded-xl px-4 py-3 text-sm font-label text-on-surface outline-none focus:border-primary transition-all duration-200 appearance-none disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          <option value="">Select class &amp; module…</option>
-          {teacherAssignments.map(a => {
-            const cls = getClassById(a.classId)
-            const mod = getModuleById(a.moduleId)
-            return <option key={a.id} value={a.id}>{cls?.name} — {mod?.name}</option>
-          })}
+          <option value="">Select class…</option>
+          {teacherClasses.map(cls => (
+            <option key={cls.id} value={cls.id}>{cls.name} Class</option>
+          ))}
         </select>
       </div>
 
@@ -139,7 +142,7 @@ export default function AttendPage() {
       {students.length > 0 && (
         <button
           onClick={handleSubmit}
-          className="mt-6 w-full py-4 rounded-xl font-label font-semibold text-sm text-on-primary bg-gradient-to-br from-primary to-primary-container hover:opacity-90 active:scale-[0.98] transition-all duration-200"
+          className="mt-6 w-full py-4 rounded-xl font-label font-semibold text-sm text-on-primary bg-gradient-to-br from-primary to-primary-dim hover:opacity-90 active:scale-[0.98] transition-all duration-200"
         >
           Submit Session
         </button>

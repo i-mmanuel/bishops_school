@@ -5,7 +5,8 @@ import {
   getInstitutionHealth, getCriticalAlerts,
   getClasses, getClassAttendanceRate, getStudentsByClass,
   getSessionsThisMonth,
-  getPresentTodayCount, getAbsentTodayCount, getStudents, getAttendanceRate
+  getPresentTodayCount, getAbsentTodayCount, getStudents, getAttendanceRate,
+  getTeachers, getSessionsByTeacher, getTeacherAttendanceRate, getTotalSessionsCount
 } from '@/lib/mock-data'
 import ProgressNebula from '@/components/ui/ProgressNebula'
 import { TrendUp, WarningCircle, EnvelopeSimple, Plus } from '@phosphor-icons/react/dist/ssr'
@@ -24,6 +25,7 @@ export default function DashboardPage() {
   const presentToday = getPresentTodayCount()
   const absentToday = getAbsentTodayCount()
   const totalStudents = getStudents().length
+  const totalSessions = getTotalSessionsCount()
 
   // Enrich alerts with absent/total counts for "X/Y Missed" display
   const enrichedAlerts = alerts.map(a => {
@@ -37,7 +39,7 @@ export default function DashboardPage() {
     { label: 'Total Students',  value: totalStudents, secondary: null,          glow: 'bg-primary/5',   bar: 'bg-primary',   barWidth: '100%' },
     { label: 'Present Today',   value: presentToday,  secondary: `${health}%`,  glow: 'bg-secondary/5', bar: 'bg-secondary shadow-[0_0_8px_rgba(105,246,184,0.4)]', barWidth: `${health}%` },
     { label: 'Absent',          value: absentToday,   secondary: null,          glow: 'bg-error/5',     bar: 'bg-error',     barWidth: `${Math.round((absentToday / Math.max(totalStudents, 1)) * 100)}%` },
-    { label: 'Attendance Rate', value: `${health}%`,  secondary: null,          glow: 'bg-tertiary/5',  bar: 'bg-tertiary',  barWidth: `${health}%` },
+    { label: 'Instructors', value: getTeachers().length, secondary: null, glow: 'bg-tertiary/5', bar: 'bg-tertiary', barWidth: '100%' },
   ]
 
   return (
@@ -62,7 +64,7 @@ export default function DashboardPage() {
         <section className="md:hidden relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-surface-container-high to-surface">
           <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 blur-[64px] rounded-full" />
           <div className="relative z-10 flex flex-col items-center">
-            <span className="font-label text-on-surface-variant uppercase tracking-[0.2em] text-[10px] mb-2 font-semibold">Current Semester Performance</span>
+            <span className="font-label text-on-surface-variant uppercase tracking-[0.2em] text-[10px] mb-2 font-semibold">Overall Attendance</span>
             <div className="flex items-baseline gap-1">
               <span className="text-7xl font-extrabold tracking-tighter text-primary font-headline">{health}</span>
               <span className="text-3xl font-bold text-primary-dim font-headline">%</span>
@@ -204,6 +206,37 @@ export default function DashboardPage() {
                   </div>
                 )
               })}
+            </div>
+
+            {/* Teacher performance */}
+            <div className="space-y-4 mt-8">
+              <h3 className="text-lg font-bold font-headline">Instructor Activity</h3>
+              <div className="space-y-3">
+                {getTeachers().map(teacher => {
+                  const teacherSessions = getSessionsByTeacher(teacher.id)
+                  const rate = getTeacherAttendanceRate(teacher.id)
+                  const pct = totalSessions > 0 ? Math.round((teacherSessions.length / totalSessions) * 100) : 0
+                  const barColor = rate >= 80 ? 'bg-secondary' : rate >= 65 ? 'bg-primary' : 'bg-error'
+                  return (
+                    <div key={teacher.id} className="flex items-center gap-4 p-4 rounded-xl"
+                      style={{ background: 'rgba(25,37,64,0.4)', border: '0.5px solid rgba(109,117,140,0.15)' }}>
+                      <div className="w-9 h-9 rounded-full overflow-hidden border border-outline-variant/20 shrink-0">
+                        <Image src={`https://i.pravatar.cc/80?u=${teacher.id}`} alt={teacher.name} width={36} height={36} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-on-surface truncate">{teacher.name}</p>
+                        <div className="mt-1.5 h-1 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                          <div className={`h-full rounded-full ${barColor}`} style={{ width: `${pct}%` }} />
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs font-bold font-label text-on-surface">{teacherSessions.length} sessions</p>
+                        <p className="text-[10px] text-on-surface-variant font-label">{pct}% of total</p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
 

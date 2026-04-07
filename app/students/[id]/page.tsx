@@ -3,17 +3,14 @@ import Image from 'next/image'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import {
   getStudentById, getCoursesForStudent, getAttendanceRate,
-  getRecentAttendanceHistory, getClassById, getChurchById, getDenominationById
+  getClassById, getChurchById, getDenominationById
 } from '@/lib/mock-data'
 import {
   Seal,
   CheckCircle,
   XCircle,
-  Clock,
-  Info,
   GraduationCap,
   ChartBar,
-  ClockCounterClockwise,
 } from '@phosphor-icons/react/dist/ssr'
 
 export default function StudentProfilePage({ params }: { params: { id: string } }) {
@@ -21,7 +18,6 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
   if (!student) notFound()
 
   const modules = getCoursesForStudent(params.id)
-  const history = getRecentAttendanceHistory(params.id)
 
   const { present: totalPresent, total: totalSessions } = getAttendanceRate(params.id)
   const totalAbsent = totalSessions - totalPresent
@@ -77,66 +73,30 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
           </div>
         </section>
 
-        {/* ── Desktop 4-stat bento grid ── */}
-        <section className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {/* ── Desktop 2-stat bento grid ── */}
+        <section className="hidden md:grid grid-cols-2 gap-4 mb-8">
           <div className="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 hover:bg-surface-container-high transition-colors">
             <div className="flex justify-between items-start mb-4">
               <CheckCircle size={30} className="text-secondary" weight="fill" />
               <span className="text-secondary font-bold text-lg font-headline">{totalPresent}</span>
             </div>
-            <h3 className="text-on-surface-variant text-sm font-label font-medium">Present Days</h3>
+            <h3 className="text-on-surface-variant text-sm font-label font-medium">Present</h3>
+            <p className="text-xs text-on-surface-variant font-label mt-1">{totalPresent} of {totalSessions} classes attended</p>
           </div>
           <div className="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 hover:bg-surface-container-high transition-colors">
             <div className="flex justify-between items-start mb-4">
               <XCircle size={30} className="text-error" weight="fill" />
               <span className="text-error font-bold text-lg font-headline">{totalAbsent}</span>
             </div>
-            <h3 className="text-on-surface-variant text-sm font-label font-medium">Absent Total</h3>
-          </div>
-          <div className="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 hover:bg-surface-container-high transition-colors">
-            <div className="flex justify-between items-start mb-4">
-              <Clock size={30} className="text-tertiary" />
-              <span className="text-tertiary font-bold text-lg font-headline">0</span>
-            </div>
-            <h3 className="text-on-surface-variant text-sm font-label font-medium">Late Arrivals</h3>
-          </div>
-          <div className="bg-surface-container-low p-6 rounded-xl border border-outline-variant/5 hover:bg-surface-container-high transition-colors">
-            <div className="flex justify-between items-start mb-4">
-              <Info size={30} className="text-primary" />
-              <span className="text-primary font-bold text-lg font-headline">0</span>
-            </div>
-            <h3 className="text-on-surface-variant text-sm font-label font-medium">Excused Leaves</h3>
+            <h3 className="text-on-surface-variant text-sm font-label font-medium">Absent</h3>
+            <p className="text-xs text-on-surface-variant font-label mt-1">{totalAbsent} of {totalSessions} classes missed</p>
           </div>
         </section>
 
-        {/* ── Desktop History + Module Breakdown two-column ── */}
-        <div className="hidden md:grid grid-cols-12 gap-8 mb-8">
-          {/* Recent History - 5 cols */}
-          <section className="col-span-5 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold font-headline">Recent History</h2>
-              <button className="text-primary text-sm font-semibold font-label hover:underline">View All</button>
-            </div>
-            <div className="space-y-4">
-              {history.slice(0, 5).map((h, i) => {
-                const dotColor = h.status === 'present' ? 'bg-secondary ring-secondary/10' : 'bg-error ring-error/10'
-                const dateStr = new Date(h.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-                const label = h.status === 'present' ? 'Attended' : 'Absent'
-                return (
-                  <div key={i} className="flex gap-4 items-start p-4 bg-surface-container-low rounded-xl border border-outline-variant/5">
-                    <div className={`mt-1 w-2 h-2 rounded-full ring-4 shrink-0 ${dotColor}`} />
-                    <div>
-                      <p className="text-sm font-semibold font-label">{dateStr}: {label}</p>
-                      <p className="text-xs text-on-surface-variant font-label mt-1">{h.moduleName}</p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </section>
-
-          {/* Module Breakdown - 7 cols */}
-          <section className="col-span-7 space-y-6">
+        {/* ── Desktop Module Breakdown ── */}
+        <div className="hidden md:grid grid-cols-1 gap-8 mb-8">
+          {/* Module Breakdown - full width */}
+          <section className="col-span-1 space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold font-headline">Module Breakdown</h2>
               <span className="text-xs text-on-surface-variant bg-surface-container-high px-2 py-1 rounded font-label">{studentClass?.name} Class</span>
@@ -221,24 +181,28 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
           </div>
         </section>
 
-        {/* ── Mobile 4-stat grid ── */}
+        {/* ── Mobile 2-stat grid ── */}
         <section className="md:hidden grid grid-cols-2 gap-4 mb-8">
-          {[
-            { label: 'Present', value: totalPresent, color: 'text-secondary', barColor: 'bg-secondary', barWidth: `${overallRate}%`, trackColor: 'bg-secondary-container/30' },
-            { label: 'Late', value: 0, color: 'text-tertiary', barColor: 'bg-tertiary', barWidth: '0%', trackColor: 'bg-tertiary-container/30' },
-            { label: 'Absent', value: totalAbsent, color: 'text-error', barColor: 'bg-error', barWidth: `${totalSessions > 0 ? Math.round((totalAbsent / totalSessions) * 100) : 0}%`, trackColor: 'bg-error-container/30' },
-            { label: 'Excused', value: 0, color: 'text-primary', barColor: 'bg-primary', barWidth: '0%', trackColor: 'bg-primary-container/30' },
-          ].map(stat => (
-            <div key={stat.label} className="bg-surface-container-high rounded-xl p-5 border border-outline-variant/10 flex flex-col space-y-2">
-              <span className={`${stat.color} text-[12px] font-bold tracking-widest uppercase font-label`}>{stat.label}</span>
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-headline font-bold">{stat.value}</span>
-              </div>
-              <div className={`h-1 w-full ${stat.trackColor} rounded-full overflow-hidden`}>
-                <div className={`h-full ${stat.barColor} rounded-full`} style={{ width: stat.barWidth }} />
-              </div>
+          <div className="bg-surface-container-high rounded-xl p-5 border border-outline-variant/10 flex flex-col space-y-2">
+            <span className="text-secondary text-[12px] font-bold tracking-widest uppercase font-label">Present</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-headline font-bold">{totalPresent}</span>
             </div>
-          ))}
+            <p className="text-[10px] text-on-surface-variant font-label">{totalPresent}/{totalSessions} classes</p>
+            <div className="h-1 w-full bg-secondary-container/30 rounded-full overflow-hidden">
+              <div className="h-full bg-secondary rounded-full" style={{ width: `${overallRate}%` }} />
+            </div>
+          </div>
+          <div className="bg-surface-container-high rounded-xl p-5 border border-outline-variant/10 flex flex-col space-y-2">
+            <span className="text-error text-[12px] font-bold tracking-widest uppercase font-label">Absent</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-3xl font-headline font-bold">{totalAbsent}</span>
+            </div>
+            <p className="text-[10px] text-on-surface-variant font-label">{totalAbsent}/{totalSessions} classes</p>
+            <div className="h-1 w-full bg-error-container/30 rounded-full overflow-hidden">
+              <div className="h-full bg-error rounded-full" style={{ width: `${totalSessions > 0 ? Math.round((totalAbsent / totalSessions) * 100) : 0}%` }} />
+            </div>
+          </div>
         </section>
 
         {/* ── Mobile module breakdown ── */}
@@ -260,36 +224,6 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
                   </div>
                   <div className="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
                     <div className={`h-full rounded-full ${barColor}`} style={{ width: `${rate}%` }} />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </section>
-
-        {/* ── Mobile timeline history ── */}
-        <section className="md:hidden space-y-4 mb-8">
-          <h3 className="font-headline font-bold text-lg flex items-center gap-2">
-            <ClockCounterClockwise size={20} className="text-primary" />
-            Recent History
-          </h3>
-          <div className="relative pl-8 space-y-8 before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-outline-variant/30">
-            {history.slice(0, 5).map((h, i) => {
-              const isPresent = h.status === 'present'
-              const dotBg = isPresent ? 'bg-secondary/20' : 'bg-error/20'
-              const dotInner = isPresent ? 'bg-secondary shadow-[0_0_8px_rgba(105,246,184,0.6)]' : 'bg-error shadow-[0_0_8px_rgba(255,110,132,0.6)]'
-              const statusLabel = isPresent ? 'Marked Present' : 'Marked Absent'
-              const statusColor = isPresent ? 'text-secondary-dim' : 'text-error'
-              const dateStr = new Date(h.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-              return (
-                <div key={i} className="relative">
-                  <div className={`absolute -left-8 top-1 w-6 h-6 rounded-full ${dotBg} flex items-center justify-center`}>
-                    <div className={`w-2.5 h-2.5 rounded-full ${dotInner}`} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold text-on-surface-variant uppercase tracking-tighter font-label">{dateStr}</span>
-                    <span className="text-on-surface font-semibold font-label">{h.moduleName}</span>
-                    <span className={`text-sm mt-1 font-label ${statusColor}`}>{statusLabel}</span>
                   </div>
                 </div>
               )

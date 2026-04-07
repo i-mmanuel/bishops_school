@@ -4,13 +4,14 @@ import Image from 'next/image'
 import { useAuth } from '@/lib/auth-context'
 import { useRouter } from 'next/navigation'
 import {
-  SquaresFour, BookOpen, Users, SignOut, GraduationCap
+  SquaresFour, BookOpen, Users, SignOut, GraduationCap, ChalkboardTeacher
 } from '@phosphor-icons/react'
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', Icon: SquaresFour },
-  { href: '/courses',   label: 'Modules',   Icon: BookOpen },
-  { href: '/students',  label: 'Students',  Icon: Users },
+  { href: '/dashboard',   label: 'Dashboard',   Icon: SquaresFour },
+  { href: '/courses',     label: 'Modules',     Icon: BookOpen },
+  { href: '/students',    label: 'Students',    Icon: Users },
+  { href: '/teachers',    label: 'Instructors', Icon: ChalkboardTeacher },
 ]
 
 export default function Sidebar({ currentPath }: { currentPath: string }) {

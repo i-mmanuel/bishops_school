@@ -535,6 +535,39 @@ export function getCourseWeeklyTrend(classId?: string): WeeklyTrend[] {
 
 // ─── Submit session ───────────────────────────────────────────────────────────
 
+export function getSessionsByTeacher(teacherId: string): Session[] {
+  return getAllSessions().filter(s => s.teacherId === teacherId)
+}
+
+export function getTeacherAttendanceRate(teacherId: string): number {
+  const sessions = getSessionsByTeacher(teacherId)
+  if (sessions.length === 0) return 0
+  let present = 0, total = 0
+  for (const session of sessions) {
+    const att = getAttendanceForSession(session.id)
+    present += att.filter(a => a.status === 'present').length
+    total += att.length
+  }
+  return total > 0 ? Math.round((present / total) * 100) : 0
+}
+
+export function getClassesForTeacher(teacherId: string): Class[] {
+  const classIds = Array.from(new Set(
+    TEACHER_MODULE_ASSIGNMENTS.filter(a => a.teacherId === teacherId).map(a => a.classId)
+  ))
+  return CLASSES.filter(c => classIds.includes(c.id))
+}
+
+export function getSessionsThisMonthByTeacher(teacherId: string): number {
+  const now = new Date()
+  const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  return getSessionsByTeacher(teacherId).filter(s => s.date.startsWith(monthStr)).length
+}
+
+export function getTotalSessionsCount(): number {
+  return getAllSessions().length
+}
+
 export function submitSession(params: {
   classId: string
   moduleId: string
