@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import {
   getStudentById, getCoursesForStudent, getAttendanceRate,
-  getRecentAttendanceHistory
+  getRecentAttendanceHistory, getClassById, getChurchById, getDenominationById
 } from '@/lib/mock-data'
 import {
   Seal,
@@ -19,14 +19,17 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
   const student = getStudentById(params.id)
   if (!student) notFound()
 
-  const courses = getCoursesForStudent(params.id)
+  const modules = getCoursesForStudent(params.id)
   const history = getRecentAttendanceHistory(params.id)
   const initials = student.name.split(' ').map(n => n[0]).join('')
 
-  const totalPresent = courses.reduce((acc, c) => acc + getAttendanceRate(params.id, c.id).present, 0)
-  const totalSessions = courses.reduce((acc, c) => acc + getAttendanceRate(params.id, c.id).total, 0)
+  const { present: totalPresent, total: totalSessions } = getAttendanceRate(params.id)
   const totalAbsent = totalSessions - totalPresent
   const overallRate = totalSessions > 0 ? Math.round((totalPresent / totalSessions) * 100) : 0
+
+  const studentClass = getClassById(student.classId)
+  const church = getChurchById(student.churchId)
+  const denomination = church ? getDenominationById(church.denominationId) : undefined
 
   const isAwardEligible = overallRate >= 90
 
@@ -51,7 +54,8 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
               <h1 className="text-4xl lg:text-5xl font-black font-headline tracking-tighter">{student.name}</h1>
               <div className="flex items-center justify-center md:justify-start gap-4 text-on-surface-variant text-sm font-label">
                 <span className="bg-surface-container-high px-3 py-1 rounded-full">ID: {student.id.toUpperCase()}</span>
-                <span className="bg-surface-container-high px-3 py-1 rounded-full">{courses.length} Courses</span>
+                <span className="bg-surface-container-high px-3 py-1 rounded-full">{studentClass?.name} Class</span>
+                {church && <span className="bg-surface-container-high px-3 py-1 rounded-full">{church.name}</span>}
               </div>
             </div>
           </div>
@@ -99,7 +103,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
           </div>
         </section>
 
-        {/* ── Desktop History + Class Breakdown two-column ── */}
+        {/* ── Desktop History + Module Breakdown two-column ── */}
         <div className="hidden md:grid grid-cols-12 gap-8 mb-8">
           {/* Recent History - 5 cols */}
           <section className="col-span-5 space-y-6">
@@ -117,7 +121,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
                     <div className={`mt-1 w-2 h-2 rounded-full ring-4 shrink-0 ${dotColor}`} />
                     <div>
                       <p className="text-sm font-semibold font-label">{dateStr}: {label}</p>
-                      <p className="text-xs text-on-surface-variant font-label mt-1">{h.courseName}</p>
+                      <p className="text-xs text-on-surface-variant font-label mt-1">{h.moduleName}</p>
                     </div>
                   </div>
                 )
@@ -125,29 +129,29 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
             </div>
           </section>
 
-          {/* Class-wise Breakdown - 7 cols */}
+          {/* Module Breakdown - 7 cols */}
           <section className="col-span-7 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold font-headline">Class-wise Breakdown</h2>
-              <span className="text-xs text-on-surface-variant bg-surface-container-high px-2 py-1 rounded font-label">All Courses</span>
+              <h2 className="text-xl font-bold font-headline">Module Breakdown</h2>
+              <span className="text-xs text-on-surface-variant bg-surface-container-high px-2 py-1 rounded font-label">{studentClass?.name} Class</span>
             </div>
             <div className="bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant/5">
               <div className="divide-y divide-outline-variant/10">
-                {courses.map((course, idx) => {
-                  const { present, total, rate } = getAttendanceRate(params.id, course.id)
+                {modules.map((mod, idx) => {
+                  const { present, total, rate } = getAttendanceRate(params.id)
                   const iconColors = ['text-primary bg-primary/10', 'text-secondary bg-secondary/10', 'text-tertiary bg-tertiary/10', 'text-on-surface-variant bg-on-surface-variant/10']
                   const iconColor = iconColors[idx % iconColors.length]
                   const barColor = rate >= 80 ? 'bg-secondary' : rate >= 65 ? 'bg-primary' : 'bg-error'
                   const rateColor = rate >= 80 ? 'text-secondary' : rate >= 65 ? 'text-on-surface' : 'text-error'
                   return (
-                    <div key={course.id} className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:bg-surface-container-high transition-all">
+                    <div key={mod.id} className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:bg-surface-container-high transition-all">
                       <div className="flex gap-4 items-center">
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${iconColor}`}>
                           <GraduationCap size={20} />
                         </div>
                         <div>
-                          <h4 className="font-bold text-on-surface font-label">{course.name}</h4>
-                          <p className="text-xs text-on-surface-variant font-label">{course.schedule.days.slice(0, 2).join(', ')}</p>
+                          <h4 className="font-bold text-on-surface font-label">{mod.name}</h4>
+                          <p className="text-xs text-on-surface-variant font-label">{mod.topics.length} topics · {mod.code}</p>
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2 w-full sm:w-48">
@@ -201,7 +205,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
           </div>
           <div>
             <h2 className="text-2xl font-headline font-extrabold tracking-tight text-on-surface">{student.name}</h2>
-            <p className="text-on-surface-variant font-label text-sm">{courses.length} Courses • ID: {student.id.toUpperCase()}</p>
+            <p className="text-on-surface-variant font-label text-sm">{studentClass?.name} Class · {denomination?.abbreviation ?? ''}</p>
           </div>
         </section>
 
@@ -225,21 +229,21 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
           ))}
         </section>
 
-        {/* ── Mobile class breakdown ── */}
+        {/* ── Mobile module breakdown ── */}
         <section className="md:hidden space-y-4 mb-8">
           <h3 className="font-headline font-bold text-lg flex items-center gap-2">
             <ChartBar size={20} className="text-primary" />
-            Class-wise Breakdown
+            Module Breakdown
           </h3>
           <div className="bg-surface-container-low rounded-xl p-6 space-y-6">
-            {courses.map(course => {
-              const { rate } = getAttendanceRate(params.id, course.id)
+            {modules.map(mod => {
+              const { rate } = getAttendanceRate(params.id)
               const rateColor = rate >= 80 ? 'text-secondary' : rate >= 65 ? 'text-primary' : 'text-error'
               const barColor = rate >= 80 ? 'bg-secondary' : rate >= 65 ? 'bg-primary' : 'bg-error'
               return (
-                <div key={course.id} className="space-y-2">
+                <div key={mod.id} className="space-y-2">
                   <div className="flex justify-between text-sm font-label font-medium">
-                    <span className="text-on-surface truncate max-w-[60%]">{course.name}</span>
+                    <span className="text-on-surface truncate max-w-[60%]">{mod.name}</span>
                     <span className={rateColor}>{rate}%</span>
                   </div>
                   <div className="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
@@ -272,7 +276,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
                   </div>
                   <div className="flex flex-col">
                     <span className="text-xs font-bold text-on-surface-variant uppercase tracking-tighter font-label">{dateStr}</span>
-                    <span className="text-on-surface font-semibold font-label">{h.courseName}</span>
+                    <span className="text-on-surface font-semibold font-label">{h.moduleName}</span>
                     <span className={`text-sm mt-1 font-label ${statusColor}`}>{statusLabel}</span>
                   </div>
                 </div>

@@ -2,9 +2,9 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import {
-  getCourseById, getStudentsForCourse, getCourseAverageAttendance,
-  getSessionsForCourse, getAttendanceForSession, getSessionsThisMonth,
-  getAttendanceRate, getTeacherById
+  getModuleById, getStudentsForModule, getModuleAttendanceRate,
+  getSessionsByModule, getAttendanceForSession, getTeachersForModule,
+  getAttendanceRate
 } from '@/lib/mock-data'
 import {
   CaretRight,
@@ -20,23 +20,24 @@ import {
 } from '@phosphor-icons/react/dist/ssr'
 
 export default function CourseDetailPage({ params }: { params: { id: string } }) {
-  const course = getCourseById(params.id)
-  if (!course) notFound()
+  const moduleData = getModuleById(params.id)
+  if (!moduleData) notFound()
 
-  const students = getStudentsForCourse(params.id)
-  const avgRate = getCourseAverageAttendance(params.id)
-  const sessionsThisMonth = getSessionsThisMonth(params.id)
+  const students = getStudentsForModule(params.id)
+  const avgRate = getModuleAttendanceRate(params.id)
 
-  const sessions = getSessionsForCourse(params.id).sort((a, b) => b.date.localeCompare(a.date))
+  const sessions = getSessionsByModule(params.id).sort((a, b) => b.date.localeCompare(a.date))
   const latestSession = sessions[0]
   const latestAttendance = latestSession ? getAttendanceForSession(latestSession.id) : []
   const presentCount = latestAttendance.filter(a => a.status === 'present').length
   const absentCount = latestAttendance.filter(a => a.status === 'absent').length
 
-  const teacher = getTeacherById(course.teacherId)
+  const now = new Date()
+  const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const sessionsThisMonth = sessions.filter(s => s.date.startsWith(monthStr)).length
 
-  // Derive a subject from course name (first word before any dash or colon, or first two words)
-  const subject = course.name.split(/[-:]/)[0].trim()
+  const teacherAssignments = getTeachersForModule(params.id)
+  const primaryTeacher = teacherAssignments[0]?.teacher
 
   return (
     <PrincipalShell>
@@ -47,19 +48,19 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
 
           {/* Breadcrumb */}
           <nav className="flex items-center gap-1 text-xs font-label text-on-surface-variant uppercase tracking-widest mb-6">
-            <Link href="/courses" className="hover:text-primary transition-colors">Courses</Link>
+            <Link href="/courses" className="hover:text-primary transition-colors">Modules</Link>
             <CaretRight size={10} />
-            <span className="text-on-surface-variant">{subject}</span>
+            <span className="text-on-surface-variant">{moduleData.code}</span>
             <CaretRight size={10} />
-            <span className="text-on-surface">{course.id.toUpperCase()}</span>
+            <span className="text-on-surface">{moduleData.name}</span>
           </nav>
 
           {/* Title + action buttons */}
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
             <div className="space-y-2">
-              <h1 className="text-4xl md:text-5xl font-headline font-extrabold tracking-tighter text-primary">{course.name}</h1>
+              <h1 className="text-4xl md:text-5xl font-headline font-extrabold tracking-tighter text-primary">{moduleData.name}</h1>
               <p className="text-on-surface-variant font-label max-w-xl leading-relaxed">
-                {course.schedule.days.join(', ')} · {course.schedule.room}
+                {moduleData.topics.length} topics · Code: {moduleData.code}
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -96,7 +97,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                 <div className="w-10 h-10 rounded-lg bg-secondary/5 flex items-center justify-center">
                   <CheckCircle size={20} className="text-secondary" weight="fill" />
                 </div>
-                <span className="text-[10px] text-on-surface-variant font-label uppercase tracking-widest">In Attendance</span>
+                <span className="text-[10px] text-on-surface-variant font-label uppercase tracking-widest">Last Session</span>
               </div>
               <div>
                 <span className="text-4xl font-headline font-bold text-secondary">{presentCount}</span>
@@ -124,7 +125,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                 <thead>
                   <tr className="text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">
                     <th className="px-8 py-6">Student Name</th>
-                    <th className="px-8 py-6">Attendance Status</th>
+                    <th className="px-8 py-6">Last Session</th>
                     <th className="px-8 py-6">Overall Rate</th>
                     <th className="px-8 py-6 text-right">Actions</th>
                   </tr>
@@ -132,7 +133,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                 <tbody className="divide-y divide-outline-variant/5">
                   {students.map(student => {
                     const latestStatus = latestAttendance.find(a => a.studentId === student.id)?.status ?? 'absent'
-                    const { rate } = getAttendanceRate(student.id, params.id)
+                    const { rate } = getAttendanceRate(student.id)
                     const initials = student.name.split(' ').map(n => n[0]).join('')
                     const isPresent = latestStatus === 'present'
                     const statusColor = isPresent ? 'bg-secondary/10 text-secondary' : 'bg-error/10 text-error'
@@ -173,17 +174,24 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
             </div>
           </section>
 
-          {/* Bottom section: Lecture Notes + Avg Attendance */}
+          {/* Bottom section: Topics + Avg Attendance */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 space-y-4">
               <h3 className="font-headline font-bold text-lg flex items-center gap-2">
                 <NotePencil size={20} className="text-primary" />
-                Lecture Notes
+                Module Topics
               </h3>
               <p className="text-sm text-on-surface-variant font-label leading-relaxed">
-                Session focus for {course.name}. {sessionsThisMonth} sessions held this month. Students are encouraged to review course materials before each session.
+                {moduleData.name} covers {moduleData.topics.length} topics. {sessionsThisMonth} sessions held this month.
               </p>
-              <button className="text-primary text-xs font-semibold font-label hover:underline">Add more notes →</button>
+              <div className="flex flex-wrap gap-2">
+                {moduleData.topics.slice(0, 6).map((topic, i) => (
+                  <span key={i} className="px-2.5 py-1 bg-surface-container-highest text-on-surface-variant text-xs font-label rounded-lg">{topic}</span>
+                ))}
+                {moduleData.topics.length > 6 && (
+                  <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs font-label rounded-lg">+{moduleData.topics.length - 6} more</span>
+                )}
+              </div>
             </div>
             <div className="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10 flex flex-col justify-center gap-6">
               <div className="flex items-center gap-4">
@@ -192,7 +200,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                 </div>
                 <div>
                   <div className="font-bold font-label">{avgRate}% Average Attendance</div>
-                  <div className="text-xs text-on-surface-variant font-label">Consistent with semester trends for {course.id.toUpperCase()}</div>
+                  <div className="text-xs text-on-surface-variant font-label">Across all classes teaching {moduleData.code}</div>
                 </div>
               </div>
               <div className="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
@@ -211,12 +219,14 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
 
           {/* Mobile: Current session hero */}
           <section className="space-y-1 mb-6">
-            <p className="text-primary font-label text-sm font-semibold tracking-wider uppercase">Current Session</p>
-            <h2 className="font-headline text-3xl font-extrabold text-on-surface">{course.name}</h2>
-            <div className="flex items-center gap-2 text-on-surface-variant">
-              <User size={16} />
-              <span className="text-sm font-label font-medium">Instructor: {teacher?.name ?? 'Unknown'}</span>
-            </div>
+            <p className="text-primary font-label text-sm font-semibold tracking-wider uppercase">Module</p>
+            <h2 className="font-headline text-3xl font-extrabold text-on-surface">{moduleData.name}</h2>
+            {primaryTeacher && (
+              <div className="flex items-center gap-2 text-on-surface-variant">
+                <User size={16} />
+                <span className="text-sm font-label font-medium">Instructor: {primaryTeacher.name}</span>
+              </div>
+            )}
           </section>
 
           {/* Mobile: Stats bento */}

@@ -11,9 +11,9 @@ export default function CriticalAlertCard({ alert }: { alert: CriticalAlert }) {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-label font-semibold text-on-surface truncate">{alert.studentName}</p>
-        <p className="text-xs font-label text-on-surface-variant truncate">{alert.courseName}</p>
+        <p className="text-xs font-label text-on-surface-variant truncate">{alert.className}</p>
       </div>
-      <span className="text-sm font-headline font-bold text-tertiary shrink-0">{alert.rate}%</span>
+      <span className="text-sm font-headline font-bold text-tertiary shrink-0">{alert.consecutiveAbsences}x</span>
     </Link>
   )
 }

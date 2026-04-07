@@ -1,21 +1,13 @@
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import Link from 'next/link'
 import {
-  getInstitutionHealth, getCriticalAlerts, getCourses, getCourseAverageAttendance,
-  getPresentTodayCount, getAbsentTodayCount, getStudents, getAttendanceRate, getStudentsForCourse
+  getInstitutionHealth, getCriticalAlerts,
+  getClasses, getClassAttendanceRate, getStudentsByClass,
+  getSessionsThisMonth,
+  getPresentTodayCount, getAbsentTodayCount, getStudents, getAttendanceRate
 } from '@/lib/mock-data'
 import ProgressNebula from '@/components/ui/ProgressNebula'
-import { TreeStructure, Cpu, Cloud, Palette, ChartLine, TrendUp, WarningCircle, EnvelopeSimple, Plus } from '@phosphor-icons/react/dist/ssr'
-import type { Icon } from '@phosphor-icons/react/dist/lib/types'
-
-// Map course IDs to subject icons
-const COURSE_ICONS: Record<string, Icon> = {
-  c1: TreeStructure,
-  c2: Cpu,
-  c3: Cloud,
-  c4: Palette,
-  c5: ChartLine,
-}
+import { TrendUp, WarningCircle, EnvelopeSimple, Plus } from '@phosphor-icons/react/dist/ssr'
 
 // Color thresholds for presence badge
 function presenceBadgeClass(rate: number) {
@@ -27,14 +19,14 @@ function presenceBadgeClass(rate: number) {
 export default function DashboardPage() {
   const health = getInstitutionHealth()
   const alerts = getCriticalAlerts()
-  const courses = getCourses()
+  const classes = getClasses()
   const presentToday = getPresentTodayCount()
   const absentToday = getAbsentTodayCount()
   const totalStudents = getStudents().length
 
   // Enrich alerts with absent/total counts for "X/Y Missed" display
   const enrichedAlerts = alerts.map(a => {
-    const { present, total } = getAttendanceRate(a.studentId, a.courseId)
+    const { present, total } = getAttendanceRate(a.studentId)
     return { ...a, absent: total - present, total }
   })
 
@@ -70,7 +62,6 @@ export default function DashboardPage() {
 
         {/* Mobile hero card */}
         <section className="md:hidden relative overflow-hidden p-8 rounded-3xl bg-gradient-to-br from-surface-container-high to-surface">
-          {/* ambient glow */}
           <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 blur-[64px] rounded-full" />
           <div className="relative z-10 flex flex-col items-center">
             <span className="font-label text-on-surface-variant uppercase tracking-[0.2em] text-[10px] mb-2 font-semibold">Current Semester Performance</span>
@@ -113,14 +104,14 @@ export default function DashboardPage() {
           </div>
           <div className="space-y-3">
             {enrichedAlerts.map(a => (
-              <Link key={`mob-${a.studentId}-${a.courseId}`} href={`/students/${a.studentId}`}
+              <Link key={`mob-${a.studentId}-${a.classId}`} href={`/students/${a.studentId}`}
                 className="p-4 bg-surface-container-low rounded-2xl flex items-center gap-4 border-l-4 border-error hover:bg-surface-container-high transition-colors">
                 <div className="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-sm font-headline font-bold text-primary ring-2 ring-error/10 shrink-0">
                   {a.studentName.split(' ').map((n: string) => n[0]).join('')}
                 </div>
                 <div className="flex-grow min-w-0">
                   <h4 className="font-semibold text-sm text-on-surface">{a.studentName}</h4>
-                  <p className="text-xs text-on-surface-variant font-label">{a.absent} consecutive absences • {a.courseName}</p>
+                  <p className="text-xs text-on-surface-variant font-label">{a.consecutiveAbsences} consecutive absences · {a.className}</p>
                 </div>
                 <div className="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-highest text-error shrink-0">
                   <EnvelopeSimple size={16} />
@@ -130,28 +121,27 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* Mobile course cards */}
+        {/* Mobile class cards */}
         <section className="md:hidden space-y-4">
-          <h2 className="text-lg font-bold font-headline">Recent Course Attendance</h2>
+          <h2 className="text-lg font-bold font-headline">Class Attendance</h2>
           <div className="space-y-4">
-            {courses.map(course => {
-              const avgRate = getCourseAverageAttendance(course.id)
-              const presentCount = Math.round((avgRate / 100) * getStudentsForCourse(course.id).length)
-              const totalCount = getStudentsForCourse(course.id).length
+            {classes.map(cls => {
+              const avgRate = getClassAttendanceRate(cls.id)
+              const students = getStudentsByClass(cls.id)
+              const presentCount = Math.round((avgRate / 100) * students.length)
               const { bar } = presenceBadgeClass(avgRate)
               const statusLabel = avgRate >= 80 ? 'High Stability' : avgRate >= 65 ? 'Attention Required' : 'Critical'
               const statusColor = avgRate >= 80 ? 'text-secondary' : avgRate >= 65 ? 'text-on-surface' : 'text-error'
-              const codeColor = avgRate >= 80 ? 'text-primary-dim' : avgRate >= 65 ? 'text-tertiary' : 'text-error'
-              const timeLabel = `${course.schedule.room} · ${course.schedule.time}`
+              const sessionsMonth = getSessionsThisMonth(cls.id)
               return (
-                <Link key={`mob-${course.id}`} href={`/courses/${course.id}`}
+                <div key={`mob-${cls.id}`}
                   className="block p-5 bg-surface-container-highest rounded-3xl border border-outline-variant/10 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 group-hover:bg-primary/10 transition-colors" />
                   <div className="flex justify-between items-start relative z-10">
                     <div className="space-y-1">
-                      <span className={`text-[10px] font-bold uppercase tracking-wider font-label ${codeColor}`}>{course.id.toUpperCase()}</span>
-                      <h3 className="text-base font-bold text-on-surface font-headline">{course.name}</h3>
-                      <p className="text-xs text-on-surface-variant font-label">{timeLabel}</p>
+                      <span className="text-[10px] font-bold uppercase tracking-wider font-label text-primary-dim">{cls.id.toUpperCase()}</span>
+                      <h3 className="text-base font-bold text-on-surface font-headline">{cls.name} Class</h3>
+                      <p className="text-xs text-on-surface-variant font-label">{sessionsMonth} sessions this month</p>
                     </div>
                     <div className="flex flex-col items-end">
                       <span className={`text-xl font-bold font-headline ${statusColor}`}>{avgRate}%</span>
@@ -163,40 +153,41 @@ export default function DashboardPage() {
                       <div className={`h-full rounded-full ${bar}`} style={{ width: `${avgRate}%` }} />
                     </div>
                     <div className="flex justify-between text-[10px] font-medium text-on-surface-variant font-label">
-                      <span>{presentCount}/{totalCount} Students Present</span>
+                      <span>{presentCount}/{students.length} Students Present</span>
                     </div>
                   </div>
-                </Link>
+                </div>
               )
             })}
           </div>
         </section>
 
-        {/* Secondary grid: courses + alerts — desktop only */}
+        {/* Secondary grid: classes + alerts — desktop only */}
         <div className="hidden md:grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-          {/* Course rows (2/3 width) */}
+          {/* Class rows (2/3 width) */}
           <div className="lg:col-span-2 space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold font-headline">Recent Course Attendance</h3>
-              <Link href="/courses" className="text-primary text-sm font-label font-medium hover:underline">View Schedule</Link>
+              <h3 className="text-xl font-bold font-headline">Class Attendance</h3>
+              <Link href="/courses" className="text-primary text-sm font-label font-medium hover:underline">View Modules</Link>
             </div>
             <div className="space-y-4">
-              {courses.map(course => {
-                const avgRate = getCourseAverageAttendance(course.id)
+              {classes.map(cls => {
+                const avgRate = getClassAttendanceRate(cls.id)
                 const { badge, bar, barWidth } = presenceBadgeClass(avgRate)
-                const CourseIcon = COURSE_ICONS[course.id] ?? TreeStructure
-                const timeLabel = `${course.schedule.days.slice(0, 2).join('/')} · ${course.schedule.time} · ${course.schedule.room}`
+                const students = getStudentsByClass(cls.id)
+                const sessionsMonth = getSessionsThisMonth(cls.id)
+                const timeLabel = `${students.length} students · ${sessionsMonth} sessions this month`
                 return (
-                  <Link key={course.id} href={`/courses/${course.id}`}
-                    className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 md:p-6 rounded-xl hover:translate-x-0.5 transition-transform duration-200 group"
+                  <div key={cls.id}
+                    className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 md:p-6 rounded-xl transition-transform duration-200 group"
                     style={{ background: 'rgba(25, 37, 64, 0.4)', backdropFilter: 'blur(12px)', border: '0.5px solid rgba(109, 117, 140, 0.1)' }}>
                     <div className="flex items-center gap-5">
                       <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-surface-container-high flex items-center justify-center border border-outline-variant/10 shrink-0">
-                        <CourseIcon size={26} className="text-primary-dim" />
+                        <span className="text-lg font-black font-headline text-primary">{cls.name[0]}</span>
                       </div>
                       <div>
-                        <h4 className="font-bold text-base md:text-lg leading-tight text-on-surface">{course.name}</h4>
+                        <h4 className="font-bold text-base md:text-lg leading-tight text-on-surface">{cls.name} Class</h4>
                         <p className="text-on-surface-variant text-xs md:text-sm font-label mt-0.5">{timeLabel}</p>
                       </div>
                     </div>
@@ -212,7 +203,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 )
               })}
             </div>
@@ -229,7 +220,7 @@ export default function DashboardPage() {
               <p className="text-sm text-on-surface-variant font-label">Multiple consecutive absences detected. Recommended intervention required.</p>
               <div className="space-y-4">
                 {enrichedAlerts.map(a => (
-                  <Link key={`${a.studentId}-${a.courseId}`} href={`/students/${a.studentId}`} className="flex items-center gap-4">
+                  <Link key={`${a.studentId}-${a.classId}`} href={`/students/${a.studentId}`} className="flex items-center gap-4">
                     <div className="w-11 h-11 rounded-xl bg-surface-container-highest flex items-center justify-center text-xs font-headline font-bold text-primary ring-2 ring-error/10 shrink-0">
                       {a.studentName.split(' ').map((n: string) => n[0]).join('')}
                     </div>
@@ -238,7 +229,7 @@ export default function DashboardPage() {
                         <p className="font-bold text-sm text-on-surface truncate">{a.studentName}</p>
                         <span className="text-error font-black text-xs font-headline shrink-0">{a.absent}/{a.total} Missed</span>
                       </div>
-                      <p className="text-[11px] text-on-surface-variant font-label">{a.courseName}</p>
+                      <p className="text-[11px] text-on-surface-variant font-label">{a.className}</p>
                     </div>
                   </Link>
                 ))}
@@ -262,7 +253,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-              <p className="text-center text-[11px] text-on-surface-variant font-label mt-4">Total attendance across all courses is within target range.</p>
+              <p className="text-center text-[11px] text-on-surface-variant font-label mt-4">Total attendance across all classes is within target range.</p>
             </div>
           </div>
 

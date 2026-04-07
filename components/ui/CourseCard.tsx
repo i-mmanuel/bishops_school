@@ -1,26 +1,8 @@
-import type { Course } from '@/lib/types'
+import type { Module } from '@/lib/types'
 import Link from 'next/link'
-import { TreeStructure, Cpu, Cloud, Palette, ChartLine, Users } from '@phosphor-icons/react/dist/ssr'
+import { BookOpen, Users } from '@phosphor-icons/react/dist/ssr'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type PhosphorIcon = React.ForwardRefExoticComponent<any>
-
-interface Props { course: Course; avgRate: number; teacherName?: string }
-
-function formatTime(t: string) {
-  const [h, m] = t.split(':').map(Number)
-  const ampm = h >= 12 ? 'PM' : 'AM'
-  const h12 = h % 12 || 12
-  return `${h12}:${m.toString().padStart(2, '0')} ${ampm}`
-}
-
-const iconMap: Record<string, PhosphorIcon> = {
-  c1: TreeStructure,
-  c2: Cpu,
-  c3: Cloud,
-  c4: Palette,
-  c5: ChartLine,
-}
+interface Props { course: Module; avgRate: number; teacherName?: string }
 
 export default function CourseCard({ course, avgRate, teacherName }: Props) {
   const rate = avgRate
@@ -30,8 +12,6 @@ export default function CourseCard({ course, avgRate, teacherName }: Props) {
       : rate >= 65
       ? 'bg-tertiary/10 text-tertiary'
       : 'bg-error/10 text-error'
-
-  const Icon = iconMap[course.id] ?? TreeStructure
 
   const progressFill = rate >= 80 ? 'bg-secondary' : rate >= 65 ? 'bg-tertiary' : 'bg-error'
   const rateColor = rate >= 80 ? 'text-secondary' : rate >= 65 ? 'text-tertiary' : 'text-error'
@@ -44,7 +24,7 @@ export default function CourseCard({ course, avgRate, teacherName }: Props) {
       {/* Top row */}
       <div className="flex items-center justify-between">
         <div className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform ${iconColors}`}>
-          <Icon size={24} />
+          <BookOpen size={24} />
         </div>
         <div className="flex flex-col items-end gap-1.5">
           <span className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant font-label">Attendance</span>
@@ -74,12 +54,12 @@ export default function CourseCard({ course, avgRate, teacherName }: Props) {
       {/* Bottom */}
       <div className="border-t border-outline-variant/10 pt-4 grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-1">
-          <span className="text-[10px] uppercase tracking-tighter font-bold text-on-surface-variant font-label">Meeting Days</span>
-          <span className="text-sm font-medium text-on-surface font-label">{course.schedule.days.join(', ')}</span>
+          <span className="text-[10px] uppercase tracking-tighter font-bold text-on-surface-variant font-label">Module Code</span>
+          <span className="text-sm font-medium text-on-surface font-label">{course.code}</span>
         </div>
         <div className="flex flex-col gap-1">
-          <span className="text-[10px] uppercase tracking-tighter font-bold text-on-surface-variant font-label">Time Slot</span>
-          <span className="text-sm font-medium text-on-surface font-label">{formatTime(course.schedule.time)}</span>
+          <span className="text-[10px] uppercase tracking-tighter font-bold text-on-surface-variant font-label">Topics</span>
+          <span className="text-sm font-medium text-on-surface font-label">{course.topics.length} topics</span>
         </div>
       </div>
     </Link>

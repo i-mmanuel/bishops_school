@@ -458,20 +458,20 @@ export function getCriticalAlerts(): CriticalAlert[] {
 export function getCoursesForStudent(studentId: string): Module[] {
   const student = STUDENTS.find(s => s.id === studentId)
   if (!student) return []
-  const moduleIds = [...new Set(
+  const moduleIds = Array.from(new Set(
     TEACHER_MODULE_ASSIGNMENTS
       .filter(a => a.classId === student.classId)
       .map(a => a.moduleId)
-  )]
+  ))
   return MODULES.filter(m => moduleIds.includes(m.id))
 }
 
 // ─── Students for module ──────────────────────────────────────────────────────
 
 export function getStudentsForModule(moduleId: string): Student[] {
-  const classIds = [...new Set(
+  const classIds = Array.from(new Set(
     TEACHER_MODULE_ASSIGNMENTS.filter(a => a.moduleId === moduleId).map(a => a.classId)
-  )]
+  ))
   return STUDENTS.filter(s => classIds.includes(s.classId))
 }
 
