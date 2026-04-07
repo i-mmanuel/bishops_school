@@ -10,7 +10,7 @@ const tabs = [
 
 export default function BottomNav({ currentPath }: { currentPath: string }) {
   return (
-    <nav className="bg-surface-container-high border-t border-outline-variant/20 px-2 py-2">
+    <nav className="border-t border-white/5 px-2 py-2" style={{ background: 'rgba(6,14,32,0.85)', backdropFilter: 'blur(24px)', WebkitBackdropFilter: 'blur(24px)' }}>
       <div className="flex justify-around">
         {tabs.map(({ href, label, Icon }) => {
           const active = currentPath === href || (href !== '/dashboard' && currentPath.startsWith(href))

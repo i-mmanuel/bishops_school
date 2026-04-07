@@ -16,7 +16,7 @@ export default function CoursesPage() {
         <div className="hidden md:flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-10">
           <div>
             <h1 className="text-4xl lg:text-5xl font-extrabold font-headline tracking-tighter mb-2">Module Directory</h1>
-            <p className="text-on-surface-variant max-w-xl font-label">All active modules in the Bishop&apos;s School curriculum for the current semester.</p>
+            <p className="text-on-surface-variant max-w-xl font-label">All active modules in the School Attendance curriculum for the current semester.</p>
           </div>
           <div className="flex gap-4">
             <div className="px-6 py-4 bg-surface-container-low rounded-xl border border-outline-variant/10">

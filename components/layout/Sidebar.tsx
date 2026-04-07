@@ -18,14 +18,15 @@ export default function Sidebar({ currentPath }: { currentPath: string }) {
   const router = useRouter()
 
   return (
-    <aside className="fixed left-0 h-full w-64 bg-background flex flex-col py-8 px-4 gap-y-6 z-40">
+    <aside className="fixed left-0 h-full w-64 flex flex-col py-8 px-4 gap-y-6 z-40 border-r border-white/5"
+      style={{ background: 'linear-gradient(160deg, rgba(14,22,46,0.98) 0%, rgba(6,14,32,0.99) 100%)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
       {/* Logo */}
       <div className="flex items-center gap-3 px-2 mb-4">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-dim flex items-center justify-center shadow-lg shadow-primary/20">
           <GraduationCap size={22} weight="fill" className="text-on-primary" />
         </div>
         <div>
-          <h1 className="text-lg font-black text-primary leading-none font-headline">Bishop&apos;s School</h1>
+          <h1 className="text-lg font-black text-primary leading-none font-headline">School Attendance</h1>
         </div>
       </div>
 

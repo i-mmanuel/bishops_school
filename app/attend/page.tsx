@@ -83,9 +83,9 @@ export default function AttendPage() {
   const absentCount = Object.values(statuses).filter(s => s === 'absent').length
 
   return (
-    <div className="min-h-[100dvh] bg-background px-4 py-8 max-w-lg mx-auto">
+    <div className="min-h-[100dvh] px-4 py-8 max-w-lg mx-auto">
       <div className="mb-8">
-        <p className="text-xs font-label text-on-surface-variant uppercase tracking-widest mb-1">Bishop&apos;s School</p>
+        <p className="text-xs font-label text-on-surface-variant uppercase tracking-widest mb-1">School Attendance</p>
         <h1 className="text-2xl font-headline font-bold text-on-surface tracking-tight">Mark Attendance</h1>
       </div>
 
