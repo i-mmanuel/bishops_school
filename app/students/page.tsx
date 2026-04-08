@@ -1,5 +1,5 @@
 import PrincipalShell from '@/components/layout/PrincipalShell'
-import { getStudents, getClasses, getChurchById, getDenominationById, getAttendanceRate } from '@/lib/mock-data'
+import { getStudents, getClasses, getChurchById, getDenominationById, getAttendanceRate, getStudentAvatarUrl } from '@/lib/mock-data'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -65,7 +65,7 @@ export default function StudentsPage() {
                         {/* Avatar */}
                         <div className="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/20 shrink-0">
                           <Image
-                            src={`https://i.pravatar.cc/80?u=${student.id}`}
+                            src={getStudentAvatarUrl(student.id)}
                             alt={student.name}
                             width={48}
                             height={48}

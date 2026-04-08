@@ -1,11 +1,11 @@
 import PrincipalShell from '@/components/layout/PrincipalShell'
-import { getModules, getModuleAttendanceRate } from '@/lib/mock-data'
+import { getModules, getModuleCompletionRate } from '@/lib/mock-data'
 import CourseDirectoryClient from './CourseDirectoryClient'
 
 export default function CoursesPage() {
   const modules = getModules()
-  const rates = Object.fromEntries(modules.map(m => [m.id, getModuleAttendanceRate(m.id)]))
-  const avgAttendance = modules.length > 0
+  const rates = Object.fromEntries(modules.map(m => [m.id, getModuleCompletionRate(m.id)]))
+  const avgCompletion = modules.length > 0
     ? Math.round(Object.values(rates).reduce((a, b) => a + b, 0) / modules.length)
     : 0
 
@@ -27,10 +27,10 @@ export default function CoursesPage() {
               </div>
             </div>
             <div className="px-6 py-4 bg-surface-container-low rounded-xl border border-outline-variant/10">
-              <span className="text-on-surface-variant text-xs block mb-1 font-label">Avg. Attendance</span>
+              <span className="text-on-surface-variant text-xs block mb-1 font-label">Avg. Completion</span>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold font-headline">{avgAttendance}%</span>
-                <span className="text-tertiary text-xs font-semibold font-label">Elite Level</span>
+                <span className="text-3xl font-bold font-headline">{avgCompletion}%</span>
+                <span className="text-tertiary text-xs font-semibold font-label">topics taught</span>
               </div>
             </div>
           </div>

@@ -46,6 +46,7 @@ export interface Student {
   name: string
   classId: string
   churchId: string
+  gender: 'male' | 'female'
 }
 
 export interface Session {
@@ -54,6 +55,7 @@ export interface Session {
   moduleId: string
   teacherId: string
   date: string  // ISO date string 'YYYY-MM-DD'
+  topicIndex: number
 }
 
 export interface Attendance {

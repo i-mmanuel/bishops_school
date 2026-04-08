@@ -2,7 +2,7 @@
 import { useState, useMemo } from 'react'
 import {
   getTeachers, getTeacherModuleAssignments, getStudentsByClass,
-  getClassById, submitSession
+  getClassById, getModuleById, submitSession
 } from '@/lib/mock-data'
 import type { Student } from '@/lib/types'
 import StudentToggleList from '@/components/attend/StudentToggleList'
@@ -14,6 +14,7 @@ export default function AttendPage() {
 
   const [teacherId, setTeacherId] = useState('')
   const [classId, setClassId] = useState('')
+  const [topicIndex, setTopicIndex] = useState<number | ''>('')
   const [statuses, setStatuses] = useState<Record<string, 'present' | 'absent'>>({})
   const [error, setError] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -28,6 +29,17 @@ export default function AttendPage() {
     return classIds.map(id => getClassById(id)).filter(Boolean) as NonNullable<ReturnType<typeof getClassById>>[]
   }, [teacherId, allAssignments])
 
+  // Module + topics for the selected teacher+class
+  const assignment = useMemo(() => {
+    if (!teacherId || !classId) return undefined
+    return allAssignments.find(a => a.teacherId === teacherId && a.classId === classId)
+  }, [teacherId, classId, allAssignments])
+
+  const moduleTopics = useMemo(() => {
+    if (!assignment) return []
+    return getModuleById(assignment.moduleId)?.topics ?? []
+  }, [assignment])
+
   const students: Student[] = useMemo(() => {
     if (!classId) return []
     return getStudentsByClass(classId)
@@ -36,12 +48,14 @@ export default function AttendPage() {
   function handleTeacherChange(id: string) {
     setTeacherId(id)
     setClassId('')
+    setTopicIndex('')
     setStatuses({})
     setError('')
   }
 
   function handleClassChange(id: string) {
     setClassId(id)
+    setTopicIndex('')
     setError('')
     const s = getStudentsByClass(id)
     setStatuses(Object.fromEntries(s.map(st => [st.id, 'present'])))
@@ -52,9 +66,7 @@ export default function AttendPage() {
   }
 
   function handleSubmit() {
-    if (!teacherId || !classId) return
-    // Derive moduleId from first assignment for this teacher+class
-    const assignment = allAssignments.find(a => a.teacherId === teacherId && a.classId === classId)
+    if (!teacherId || !classId || topicIndex === '') return
     if (!assignment) { setError('No module assignment found.'); return }
     const today = new Date().toISOString().split('T')[0]
     const result = submitSession({
@@ -62,6 +74,7 @@ export default function AttendPage() {
       moduleId: assignment.moduleId,
       teacherId,
       date: today,
+      topicIndex: topicIndex as number,
       records: students.map(s => ({ studentId: s.id, status: statuses[s.id] ?? 'present' })),
     })
     if (!result.success) { setError(result.error ?? 'Submission failed.'); return }
@@ -72,6 +85,7 @@ export default function AttendPage() {
 
   function handleSubmitAnother() {
     setClassId('')
+    setTopicIndex('')
     setStatuses({})
     setError('')
     setSubmitted(false)
@@ -108,7 +122,7 @@ export default function AttendPage() {
       </div>
 
       {/* Class selector */}
-      <div className="flex flex-col gap-1.5 mb-6">
+      <div className="flex flex-col gap-1.5 mb-4">
         <label className="text-xs font-label text-on-surface-variant uppercase tracking-wider">Class</label>
         <select
           value={classId}
@@ -119,6 +133,22 @@ export default function AttendPage() {
           <option value="">Select class…</option>
           {teacherClasses.map(cls => (
             <option key={cls.id} value={cls.id}>{cls.name} Class</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Topic selector */}
+      <div className="flex flex-col gap-1.5 mb-6">
+        <label className="text-xs font-label text-on-surface-variant uppercase tracking-wider">Topic</label>
+        <select
+          value={topicIndex}
+          onChange={e => { setTopicIndex(e.target.value === '' ? '' : Number(e.target.value)); setError('') }}
+          disabled={!classId || moduleTopics.length === 0}
+          className="bg-surface-container-lowest border border-outline-variant/40 rounded-xl px-4 py-3 text-sm font-label text-on-surface outline-none focus:border-primary transition-all duration-200 appearance-none disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <option value="">Select topic…</option>
+          {moduleTopics.map((topic, i) => (
+            <option key={i} value={i}>{topic}</option>
           ))}
         </select>
       </div>
@@ -142,7 +172,8 @@ export default function AttendPage() {
       {students.length > 0 && (
         <button
           onClick={handleSubmit}
-          className="mt-6 w-full py-4 rounded-xl font-label font-semibold text-sm text-on-primary bg-gradient-to-br from-primary to-primary-dim hover:opacity-90 active:scale-[0.98] transition-all duration-200"
+          disabled={topicIndex === ''}
+          className="mt-6 w-full py-4 rounded-xl font-label font-semibold text-sm text-on-primary bg-gradient-to-br from-primary to-primary-dim hover:opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Submit Session
         </button>

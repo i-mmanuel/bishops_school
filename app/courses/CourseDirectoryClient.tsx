@@ -101,7 +101,7 @@ export default function CourseDirectoryClient({ courses, rates }: Props) {
                 </div>
                 <div className={`px-3 py-2 rounded-xl text-center border ${badgeBg} ${badgeBorder}`}>
                   <span className={`font-bold text-lg leading-none ${badgeColor}`}>{rate}%</span>
-                  <p className={`text-[10px] uppercase tracking-tighter mt-1 ${badgeSubColor}`}>Attendance</p>
+                  <p className={`text-[10px] uppercase tracking-tighter mt-1 ${badgeSubColor}`}>Completion</p>
                 </div>
               </div>
               <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />

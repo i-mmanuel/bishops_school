@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import {
-  getModuleById, getStudentsForModule, getModuleAttendanceRate,
+  getModuleById, getStudentsForModule,
   getSessionsByModule, getAttendanceForSession, getTeachersForModule,
   getAttendanceRate, getStudentAvatarUrl, getModuleTopicStats
 } from '@/lib/mock-data'
@@ -16,7 +16,6 @@ import {
   XCircle,
   DotsThree,
   NotePencil,
-  TrendUp,
   User
 } from '@phosphor-icons/react/dist/ssr'
 
@@ -25,17 +24,12 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
   if (!moduleData) notFound()
 
   const students = getStudentsForModule(params.id)
-  const avgRate = getModuleAttendanceRate(params.id)
 
   const sessions = getSessionsByModule(params.id).sort((a, b) => b.date.localeCompare(a.date))
   const latestSession = sessions[0]
   const latestAttendance = latestSession ? getAttendanceForSession(latestSession.id) : []
   const presentCount = latestAttendance.filter(a => a.status === 'present').length
   const absentCount = latestAttendance.filter(a => a.status === 'absent').length
-
-  const now = new Date()
-  const monthStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-  const sessionsThisMonth = sessions.filter(s => s.date.startsWith(monthStr)).length
 
   const teacherAssignments = getTeachersForModule(params.id)
   const primaryTeacher = teacherAssignments[0]?.teacher

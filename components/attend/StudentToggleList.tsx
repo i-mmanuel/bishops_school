@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import type { Student } from '@/lib/types'
 import StatusBadge from '@/components/ui/StatusBadge'
+import { getStudentAvatarUrl } from '@/lib/mock-data'
 
 interface Props {
   students: Student[]
@@ -32,7 +33,7 @@ export default function StudentToggleList({ students, statuses, onToggle }: Prop
                 ${status === 'absent' ? 'bg-tertiary/5 border border-tertiary/20' : 'bg-surface-container-high border border-transparent hover:bg-surface-bright'}`}>
               <div className="w-9 h-9 rounded-full overflow-hidden border border-outline-variant/20 shrink-0">
                 <Image
-                  src={`https://i.pravatar.cc/80?u=${student.id}`}
+                  src={getStudentAvatarUrl(student.id)}
                   alt={student.name}
                   width={36}
                   height={36}

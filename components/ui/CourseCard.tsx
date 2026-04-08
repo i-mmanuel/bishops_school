@@ -27,7 +27,7 @@ export default function CourseCard({ course, avgRate, teacherName }: Props) {
           <BookOpen size={24} />
         </div>
         <div className="flex flex-col items-end gap-1.5">
-          <span className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant font-label">Attendance</span>
+          <span className="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant font-label">Completion</span>
           <div className="flex items-center gap-2">
             <div className="w-24 h-2 bg-surface-container-lowest rounded-full overflow-hidden">
               <div

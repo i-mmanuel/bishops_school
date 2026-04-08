@@ -3,7 +3,7 @@ import Image from 'next/image'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import {
   getStudentById, getCoursesForStudent, getAttendanceRate,
-  getClassById, getChurchById, getDenominationById, getStudentParticipationAvg
+  getClassById, getChurchById, getDenominationById, getStudentParticipationAvg, getStudentAvatarUrl
 } from '@/lib/mock-data'
 import {
   Seal,
@@ -42,7 +42,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
             <div className="relative group">
               <div className="w-48 h-48 rounded-xl overflow-hidden shadow-[0_12px_40px_0_rgba(0,0,0,0.25)] border-2 border-outline-variant/10">
                 <Image
-                  src={`https://i.pravatar.cc/200?u=${student.id}`}
+                  src={getStudentAvatarUrl(student.id)}
                   alt={student.name}
                   width={192}
                   height={192}
@@ -172,7 +172,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
             <div className="w-32 h-32 rounded-full p-1 bg-gradient-to-br from-primary to-secondary">
               <div className="w-full h-full rounded-full overflow-hidden border-4 border-surface">
                 <Image
-                  src={`https://i.pravatar.cc/200?u=${student.id}`}
+                  src={getStudentAvatarUrl(student.id)}
                   alt={student.name}
                   width={128}
                   height={128}

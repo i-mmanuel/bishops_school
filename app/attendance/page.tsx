@@ -6,7 +6,9 @@ import {
   getClasses, getClassAttendanceRate, getStudentsByClass,
   getSessionsThisMonth,
   getPresentTodayCount, getAbsentTodayCount, getStudents, getAttendanceRate,
-  getTeachers, getSessionsByTeacher, getTeacherAttendanceRate, getTotalSessionsCount
+  getTeachers, getSessionsByTeacher, getTeacherAttendanceRate, getTotalSessionsCount,
+  getStudentAvatarUrl,
+  getModules, getModuleAttendanceRate, getSessionsByModule,
 } from '@/lib/mock-data'
 import ProgressNebula from '@/components/ui/ProgressNebula'
 import { TrendUp, WarningCircle, EnvelopeSimple, Plus } from '@phosphor-icons/react/dist/ssr'
@@ -34,6 +36,11 @@ export default function DashboardPage() {
   })
 
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
+
+  // Modules that have at least one session
+  const activeModules = getModules()
+    .map(m => ({ module: m, rate: getModuleAttendanceRate(m.id), sessions: getSessionsByModule(m.id).length }))
+    .filter(x => x.sessions > 0)
 
   const kpis = [
     { label: 'Total Students',  value: totalStudents, secondary: null,          glow: 'bg-primary/5',   bar: 'bg-primary',   barWidth: '100%' },
@@ -107,7 +114,7 @@ export default function DashboardPage() {
               <Link key={`mob-${a.studentId}-${a.classId}`} href={`/students/${a.studentId}`}
                 className="p-4 bg-surface-container-low rounded-2xl flex items-center gap-4 border-l-4 border-error hover:bg-surface-container-high transition-colors">
                 <div className="w-12 h-12 rounded-xl overflow-hidden ring-2 ring-error/10 shrink-0">
-                  <Image src={`https://i.pravatar.cc/80?u=${a.studentId}`} alt={a.studentName} width={48} height={48} className="w-full h-full object-cover" />
+                  <Image src={getStudentAvatarUrl(a.studentId)} alt={a.studentName} width={48} height={48} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-grow min-w-0">
                   <h4 className="font-semibold text-sm text-on-surface">{a.studentName}</h4>
@@ -162,6 +169,39 @@ export default function DashboardPage() {
           </div>
         </section>
 
+        {/* Mobile module attendance */}
+        <section className="md:hidden space-y-4">
+          <h2 className="text-lg font-bold font-headline">Module Attendance</h2>
+          <div className="space-y-4">
+            {activeModules.map(({ module, rate, sessions }) => {
+              const { bar } = presenceBadgeClass(rate)
+              const statusColor = rate >= 80 ? 'text-secondary' : rate >= 65 ? 'text-on-surface' : 'text-error'
+              return (
+                <div key={`mob-mod-${module.id}`}
+                  className="block p-5 bg-surface-container-highest rounded-3xl border border-outline-variant/10 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 pointer-events-none" />
+                  <div className="flex justify-between items-start relative z-10">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider font-label text-primary-dim">{module.code}</span>
+                      <h3 className="text-base font-bold text-on-surface font-headline">{module.name}</h3>
+                      <p className="text-xs text-on-surface-variant font-label">{sessions} sessions · {module.topics.length} topics</p>
+                    </div>
+                    <div className="flex flex-col items-end">
+                      <span className={`text-xl font-bold font-headline ${statusColor}`}>{rate}%</span>
+                      <span className="text-[10px] text-on-surface-variant font-label">Attendance</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 space-y-2 relative z-10">
+                    <div className="h-1.5 w-full bg-surface-container-low rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${bar}`} style={{ width: `${rate}%` }} />
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
         {/* Secondary grid: classes + alerts — desktop only */}
         <div className="hidden md:grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -206,6 +246,46 @@ export default function DashboardPage() {
                   </div>
                 )
               })}
+            </div>
+
+            {/* Module attendance */}
+            <div className="space-y-4 mt-8">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold font-headline">Module Attendance</h3>
+                <Link href="/courses" className="text-primary text-sm font-label font-medium hover:underline">View All Modules</Link>
+              </div>
+              <div className="space-y-4">
+                {activeModules.map(({ module, rate, sessions }) => {
+                  const { badge, bar, barWidth } = presenceBadgeClass(rate)
+                  return (
+                    <div key={module.id}
+                      className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-5 md:p-6 rounded-xl transition-transform duration-200"
+                      style={{ background: 'rgba(25, 37, 64, 0.4)', backdropFilter: 'blur(12px)', border: '0.5px solid rgba(109, 117, 140, 0.1)' }}>
+                      <div className="flex items-center gap-5">
+                        <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-surface-container-high flex items-center justify-center border border-outline-variant/10 shrink-0">
+                          <span className="text-sm font-black font-headline text-primary">{module.code}</span>
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-base leading-tight text-on-surface">{module.name}</h4>
+                          <p className="text-on-surface-variant text-xs font-label mt-0.5">{sessions} sessions · {module.topics.length} topics</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-6 md:gap-8 shrink-0">
+                        <div className="text-right">
+                          <p className="text-[10px] uppercase tracking-tight text-on-surface-variant font-bold font-label mb-1.5">Status</p>
+                          <span className={`px-3 py-1 rounded-full text-xs font-bold ring-1 ${badge}`}>{rate}% Presence</span>
+                        </div>
+                        <div className="w-24 md:w-32">
+                          <p className="text-[10px] uppercase tracking-tight text-on-surface-variant font-bold font-label mb-1.5">Fill Rate</p>
+                          <div className="h-1.5 w-full bg-surface-container-lowest rounded-full overflow-hidden">
+                            <div className={`h-full rounded-full ${bar}`} style={{ width: barWidth }} />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
             </div>
 
             {/* Teacher performance */}
@@ -253,7 +333,7 @@ export default function DashboardPage() {
                 {enrichedAlerts.map(a => (
                   <Link key={`${a.studentId}-${a.classId}`} href={`/students/${a.studentId}`} className="flex items-center gap-4">
                     <div className="w-11 h-11 rounded-xl overflow-hidden ring-2 ring-error/10 shrink-0">
-                      <Image src={`https://i.pravatar.cc/80?u=${a.studentId}`} alt={a.studentName} width={44} height={44} className="w-full h-full object-cover" />
+                      <Image src={getStudentAvatarUrl(a.studentId)} alt={a.studentName} width={44} height={44} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
