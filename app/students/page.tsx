@@ -15,14 +15,18 @@ export default function StudentsPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight font-headline text-on-surface mb-2">Students</h1>
-            <p className="text-on-surface-variant font-label text-sm">{allStudents.length} students across {classes.length} classes</p>
+            <p className="text-on-surface-variant/60 font-label text-sm">{allStudents.length} students across {classes.length} classes</p>
           </div>
           <div className="hidden md:flex gap-4">
             {classes.map(cls => {
               const count = allStudents.filter(s => s.classId === cls.id).length
               return (
-                <div key={cls.id} className="px-5 py-3 bg-surface-container-low rounded-xl border border-outline-variant/10">
-                  <span className="text-on-surface-variant text-xs block mb-0.5 font-label">{cls.name} Class</span>
+                <div
+                  key={cls.id}
+                  className="px-5 py-3 rounded-xl border border-white/[0.07]"
+                  style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+                >
+                  <span className="text-on-surface-variant/60 text-xs block mb-0.5 font-label">{cls.name} Class</span>
                   <span className="text-2xl font-bold font-headline">{count}</span>
                 </div>
               )
@@ -38,11 +42,15 @@ export default function StudentsPage() {
               <section key={cls.id}>
                 {/* Class header */}
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <span className="text-sm font-black text-primary font-headline">{cls.name[0]}</span>
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center"
+                    style={{ boxShadow: '0 0 12px rgba(124,58,237,0.2)' }}>
+                    <span className="text-sm font-black text-primary-dim font-headline">{cls.name[0]}</span>
                   </div>
                   <h2 className="text-xl font-bold font-headline">{cls.name} Class</h2>
-                  <span className="ml-2 text-xs font-label text-on-surface-variant bg-surface-container-high px-2.5 py-1 rounded-full">
+                  <span
+                    className="ml-2 text-xs font-label text-on-surface-variant/60 px-2.5 py-1 rounded-full border border-white/[0.07]"
+                    style={{ background: 'rgba(255,255,255,0.04)' }}
+                  >
                     {classStudents.length} students
                   </span>
                 </div>
@@ -53,17 +61,18 @@ export default function StudentsPage() {
                     const { rate } = getAttendanceRate(student.id)
                     const church = getChurchById(student.churchId)
                     const denomination = church ? getDenominationById(church.denominationId) : undefined
-                    const rateColor = rate >= 80 ? 'text-secondary' : rate >= 65 ? 'text-primary' : 'text-error'
-                    const barColor = rate >= 80 ? 'bg-secondary' : rate >= 65 ? 'bg-primary' : 'bg-error'
+                    const rateColor = rate >= 80 ? 'text-secondary-dim' : rate >= 65 ? 'text-primary-dim' : 'text-tertiary-dim'
+                    const progressGradient = rate >= 80 ? 'from-secondary to-secondary-dim' : rate >= 65 ? 'from-primary to-primary-dim' : 'from-tertiary to-tertiary-dim'
 
                     return (
                       <Link
                         key={student.id}
                         href={`/students/${student.id}`}
-                        className="flex items-center gap-4 p-4 bg-surface-container-high rounded-xl border border-outline-variant/10 hover:bg-surface-container-highest transition-all duration-200 group"
+                        className="flex items-center gap-4 p-4 rounded-xl border border-white/[0.07] hover:border-white/[0.12] transition-all duration-200 group"
+                        style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
                       >
                         {/* Avatar */}
-                        <div className="w-12 h-12 rounded-full overflow-hidden border border-outline-variant/20 shrink-0">
+                        <div className="w-12 h-12 rounded-full overflow-hidden border border-white/[0.08] shrink-0">
                           <Image
                             src={getStudentAvatarUrl(student.id)}
                             alt={student.name}
@@ -75,11 +84,11 @@ export default function StudentsPage() {
 
                         {/* Info */}
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-on-surface text-sm truncate group-hover:text-primary transition-colors">{student.name}</p>
-                          <p className="text-xs text-on-surface-variant font-label truncate">{denomination?.abbreviation} · {church?.name.split(' ').slice(1).join(' ')}</p>
+                          <p className="font-semibold text-on-surface text-sm truncate group-hover:text-primary-dim transition-colors">{student.name}</p>
+                          <p className="text-xs text-on-surface-variant/60 font-label truncate">{denomination?.abbreviation} · {church?.name.split(' ').slice(1).join(' ')}</p>
                           <div className="mt-2 flex items-center gap-2">
-                            <div className="flex-1 h-1 bg-surface-container-lowest rounded-full overflow-hidden">
-                              <div className={`h-full rounded-full ${barColor}`} style={{ width: `${rate}%` }} />
+                            <div className="flex-1 h-1 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                              <div className={`h-full rounded-full bg-gradient-to-r ${progressGradient}`} style={{ width: `${rate}%` }} />
                             </div>
                             <span className={`text-xs font-bold font-label ${rateColor} shrink-0`}>{rate}%</span>
                           </div>
