@@ -29,7 +29,7 @@ export default function AdminModulesPage() {
   // Chapter-level state
   const [newChapterName, setNewChapterName] = useState('')
 
-  const inputClass = "rounded-lg px-3 py-1.5 text-sm text-on-surface outline-none border border-white/[0.08] focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-label"
+  const inputClass = "rounded-lg px-3 py-2 text-sm text-on-surface outline-none border border-white/[0.08] focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-label"
   const inputStyle = { background: 'rgba(255,255,255,0.04)' }
 
   useEffect(() => {
@@ -173,9 +173,9 @@ export default function AdminModulesPage() {
 
   return (
     <AdminShell>
-      <div className="p-6 md:p-8 max-w-4xl">
+      <div className="px-4 py-6 md:p-8 max-w-4xl mx-auto pb-24 md:pb-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <h1 className="text-2xl font-headline font-bold text-on-surface">Modules</h1>
           <button
             onClick={() => { setShowCreate(v => !v); setEditingModuleId(null) }}
@@ -190,21 +190,21 @@ export default function AdminModulesPage() {
         {/* Create module form */}
         {showCreate && (
           <div
-            className="mb-6 p-4 rounded-xl border border-white/[0.08] flex flex-wrap gap-3 items-end"
+            className="mb-6 p-4 rounded-xl border border-white/[0.08] flex flex-col md:flex-row md:flex-wrap gap-3 md:items-end"
             style={{ background: 'rgba(255,255,255,0.03)' }}
           >
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 flex-1 min-w-0">
               <label className="text-[10px] uppercase tracking-wider font-label text-on-surface-variant/50">Module Name</label>
-              <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. Loyalty" className={inputClass} style={inputStyle} />
+              <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. Loyalty" className={`${inputClass} w-full`} style={inputStyle} />
             </div>
             <div className="flex flex-col gap-1">
               <label className="text-[10px] uppercase tracking-wider font-label text-on-surface-variant/50">Code</label>
-              <input value={newCode} onChange={e => setNewCode(e.target.value)} placeholder="e.g. L" className={`${inputClass} w-20`} style={inputStyle} />
+              <input value={newCode} onChange={e => setNewCode(e.target.value)} placeholder="e.g. L" className={`${inputClass} w-full md:w-20`} style={inputStyle} />
             </div>
             <button
               onClick={handleCreateModule}
               disabled={!newName.trim() || !newCode.trim()}
-              className="px-4 py-1.5 rounded-lg text-sm font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="w-full md:w-auto px-4 py-2 rounded-lg text-sm font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Create
             </button>
@@ -237,18 +237,18 @@ export default function AdminModulesPage() {
                       <span className="font-medium text-on-surface">{mod.name}</span>
                     )}
                   </div>
-                  <span className="text-xs font-label text-on-surface-variant/40 shrink-0">{mod.books.length} book{mod.books.length !== 1 ? 's' : ''}</span>
+                  <span className="text-xs font-label text-on-surface-variant/40 shrink-0 hidden sm:inline">{mod.books.length} book{mod.books.length !== 1 ? 's' : ''}</span>
                   <div className="flex items-center gap-2 shrink-0">
                     {editingModuleId === mod.id ? (
                       <>
                         <button
                           onClick={handleSaveModule}
                           disabled={!editModuleName.trim() || !editModuleCode.trim()}
-                          className="px-3 py-1 rounded-lg text-xs font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
+                          className="px-3 py-2 md:py-1 rounded-lg text-xs font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
                         >
                           Save
                         </button>
-                        <button onClick={() => setEditingModuleId(null)} className="px-3 py-1 rounded-lg text-xs font-label text-on-surface-variant/60 border border-white/[0.08] transition-colors">
+                        <button onClick={() => setEditingModuleId(null)} className="px-3 py-2 md:py-1 rounded-lg text-xs font-label text-on-surface-variant/60 border border-white/[0.08] transition-colors">
                           Cancel
                         </button>
                       </>
@@ -256,19 +256,19 @@ export default function AdminModulesPage() {
                       <>
                         <button
                           onClick={() => toggleModuleExpand(mod.id)}
-                          className={`px-3 py-1 rounded-lg text-xs font-label border transition-colors ${expandedModuleId === mod.id ? 'bg-secondary/10 text-secondary-dim border-secondary/20' : 'text-on-surface-variant/60 border-white/[0.08] hover:bg-surface/[0.04] hover:text-on-surface'}`}
+                          className={`px-3 py-2 md:py-1 rounded-lg text-xs font-label border transition-colors ${expandedModuleId === mod.id ? 'bg-secondary/10 text-secondary-dim border-secondary/20' : 'text-on-surface-variant/60 border-white/[0.08] hover:bg-surface/[0.04] hover:text-on-surface'}`}
                         >
                           Books
                         </button>
                         <button
                           onClick={() => startEditModule(mod.id, mod.name, mod.code)}
-                          className="px-3 py-1 rounded-lg text-xs font-label text-on-surface-variant/60 border border-white/[0.08] hover:bg-surface/[0.04] hover:text-on-surface transition-colors"
+                          className="px-3 py-2 md:py-1 rounded-lg text-xs font-label text-on-surface-variant/60 border border-white/[0.08] hover:bg-surface/[0.04] hover:text-on-surface transition-colors"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteModule(mod.id)}
-                          className="px-3 py-1 rounded-lg text-xs font-label text-tertiary/60 border border-tertiary/20 hover:bg-tertiary/10 hover:text-tertiary transition-colors"
+                          className="px-3 py-2 md:py-1 rounded-lg text-xs font-label text-tertiary/60 border border-tertiary/20 hover:bg-tertiary/10 hover:text-tertiary transition-colors"
                         >
                           Delete
                         </button>
@@ -281,18 +281,18 @@ export default function AdminModulesPage() {
                 {expandedModuleId === mod.id && (
                   <div className="border-t border-white/[0.06] px-4 py-4" style={{ background: 'rgba(255,255,255,0.015)' }}>
                     {/* Add book form */}
-                    <div className="flex gap-2 mb-3">
+                    <div className="flex flex-col sm:flex-row gap-2 mb-3">
                       <input
                         value={newBookName}
                         onChange={e => setNewBookName(e.target.value)}
                         placeholder="Book name…"
-                        className={`${inputClass} flex-1`}
+                        className={`${inputClass} flex-1 w-full`}
                         style={inputStyle}
                       />
                       <button
                         onClick={() => handleAddBook(mod.id)}
                         disabled={!newBookName.trim()}
-                        className="px-3 py-1.5 rounded-lg text-xs font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
+                        className="w-full sm:w-auto px-3 py-2 rounded-lg text-xs font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
                       >
                         + Add Book
                       </button>
@@ -321,11 +321,11 @@ export default function AdminModulesPage() {
                                   <button
                                     onClick={() => handleSaveBook(mod.id, book.id)}
                                     disabled={!editBookName.trim()}
-                                    className="px-2.5 py-0.5 rounded text-[10px] font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
+                                    className="px-2.5 py-1.5 md:py-0.5 rounded text-[10px] font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
                                   >
                                     Save
                                   </button>
-                                  <button onClick={() => setEditingBookId(null)} className="px-2.5 py-0.5 rounded text-[10px] font-label text-on-surface-variant/60 border border-white/[0.06] transition-colors">
+                                  <button onClick={() => setEditingBookId(null)} className="px-2.5 py-1.5 md:py-0.5 rounded text-[10px] font-label text-on-surface-variant/60 border border-white/[0.06] transition-colors">
                                     Cancel
                                   </button>
                                 </>
@@ -333,14 +333,14 @@ export default function AdminModulesPage() {
                                 <>
                                   <button
                                     onClick={() => toggleBookExpand(book.id)}
-                                    className={`px-2.5 py-0.5 rounded text-[10px] font-label border transition-colors ${expandedBookId === book.id ? 'bg-secondary/10 text-secondary-dim border-secondary/20' : 'text-on-surface-variant/50 border-white/[0.06] hover:text-on-surface'}`}
+                                    className={`px-2.5 py-1.5 md:py-0.5 rounded text-[10px] font-label border transition-colors ${expandedBookId === book.id ? 'bg-secondary/10 text-secondary-dim border-secondary/20' : 'text-on-surface-variant/50 border-white/[0.06] hover:text-on-surface'}`}
                                   >
                                     Chapters
                                   </button>
-                                  <button onClick={() => startEditBook(book.id, book.name)} className="px-2.5 py-0.5 rounded text-[10px] font-label text-on-surface-variant/50 border border-white/[0.06] hover:text-on-surface transition-colors">
+                                  <button onClick={() => startEditBook(book.id, book.name)} className="px-2.5 py-1.5 md:py-0.5 rounded text-[10px] font-label text-on-surface-variant/50 border border-white/[0.06] hover:text-on-surface transition-colors">
                                     Edit
                                   </button>
-                                  <button onClick={() => handleDeleteBook(mod.id, book.id)} className="px-2.5 py-0.5 rounded text-[10px] font-label text-tertiary/50 border border-tertiary/15 hover:text-tertiary hover:bg-tertiary/10 transition-colors">
+                                  <button onClick={() => handleDeleteBook(mod.id, book.id)} className="px-2.5 py-1.5 md:py-0.5 rounded text-[10px] font-label text-tertiary/50 border border-tertiary/15 hover:text-tertiary hover:bg-tertiary/10 transition-colors">
                                     Delete
                                   </button>
                                 </>
@@ -352,18 +352,18 @@ export default function AdminModulesPage() {
                           {expandedBookId === book.id && (
                             <div className="pl-4 pb-3">
                               {/* Add chapter */}
-                              <div className="flex gap-2 mb-2">
+                              <div className="flex flex-col sm:flex-row gap-2 mb-2">
                                 <input
                                   value={newChapterName}
                                   onChange={e => setNewChapterName(e.target.value)}
                                   placeholder="Chapter name…"
-                                  className={`${inputClass} flex-1 text-xs`}
+                                  className={`${inputClass} flex-1 w-full text-xs`}
                                   style={inputStyle}
                                 />
                                 <button
                                   onClick={() => handleAddChapter(mod.id, book)}
                                   disabled={!newChapterName.trim()}
-                                  className="px-2.5 py-1 rounded text-[10px] font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
+                                  className="w-full sm:w-auto px-2.5 py-2 md:py-1 rounded text-[10px] font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
                                 >
                                   + Add
                                 </button>
