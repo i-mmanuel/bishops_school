@@ -5,7 +5,7 @@ import PrincipalShell from '@/components/layout/PrincipalShell'
 import {
   getTeacherById, getClassById, getModuleById,
   getSessionsByTeacher, getSessionsByClass,
-  getAttendanceForSession, getTeacherModuleAssignments,
+  getAttendanceForSession,
 } from '@/lib/mock-data'
 import { CaretLeft, BookOpen, CheckCircle, XCircle } from '@phosphor-icons/react/dist/ssr'
 
@@ -29,11 +29,9 @@ export default function TeacherClassBreakdownPage({ params }: { params: { id: st
     ? Math.round((teacherClassSessions.length / totalClassSessions) * 100)
     : 0
 
-  const assignedModuleIds = getTeacherModuleAssignments()
-    .filter(a => a.teacherId === params.id && a.classId === params.classId)
-    .map(a => a.moduleId)
+  const taughtModuleIds = Array.from(new Set(teacherClassSessions.map(s => s.moduleId)))
 
-  const moduleGroups = assignedModuleIds.map(moduleId => {
+  const moduleGroups = taughtModuleIds.map(moduleId => {
     const mod = getModuleById(moduleId)!
     const sessions = teacherClassSessions.filter(s => s.moduleId === moduleId)
     const enriched = sessions.map(session => {
