@@ -5,7 +5,7 @@ import PrincipalShell from '@/components/layout/PrincipalShell'
 import {
   getModuleById, getStudentsForModule,
   getSessionsByModule, getAttendanceForSession, getTeachersForModule,
-  getAttendanceRate, getStudentAvatarUrl, getModuleTopicStats
+  getAttendanceRate, getStudentAvatarUrl, getModuleBookStats
 } from '@/lib/mock-data'
 import {
   CaretRight,
@@ -38,8 +38,8 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
 
   const teacherAssignments = getTeachersForModule(params.id)
   const primaryTeacher = teacherAssignments[0]?.teacher
-  const topicStats = getModuleTopicStats(params.id)
-  const taughtCount = topicStats.filter(t => t.taught).length
+  const bookStats = getModuleBookStats(params.id)
+  const taughtCount = bookStats.filter(b => b.taught).length
 
   return (
     <PrincipalShell>
@@ -62,7 +62,7 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
             <div className="space-y-2">
               <h1 className="text-4xl md:text-5xl font-headline font-extrabold tracking-tighter text-primary-dim">{moduleData.name}</h1>
               <p className="text-on-surface-variant/60 font-label max-w-xl leading-relaxed">
-                {moduleData.topics.length} topics · Code: {moduleData.code}
+                {moduleData.books.length} books · Code: {moduleData.code}
               </p>
             </div>
             <div className="flex items-center gap-4">
@@ -188,19 +188,19 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
             <div className="flex items-center justify-between">
               <h3 className="font-headline font-bold text-lg flex items-center gap-2">
                 <NotePencil size={20} className="text-primary-dim" />
-                Topic Progress
+                Book Progress
               </h3>
               <span
                 className="text-xs font-label text-on-surface-variant/60 px-3 py-1 rounded-full border border-white/[0.07]"
                 style={{ background: 'rgba(255,255,255,0.04)' }}
               >
-                {taughtCount}/{topicStats.length} taught
+                {taughtCount}/{bookStats.length} taught
               </span>
             </div>
             <div className="rounded-xl border border-white/[0.07] overflow-hidden divide-y divide-white/[0.04]" style={glassCard}>
-              {topicStats.map((t, i) => {
-                const barGradient = !t.taught ? undefined : t.attendanceRate >= 80 ? 'from-secondary to-secondary-dim' : t.attendanceRate >= 65 ? 'from-primary to-primary-dim' : 'from-tertiary to-tertiary-dim'
-                const rateColor = !t.taught ? 'text-on-surface-variant/60' : t.attendanceRate >= 80 ? 'text-secondary-dim' : t.attendanceRate >= 65 ? 'text-primary-dim' : 'text-tertiary-dim'
+              {bookStats.map((b, i) => {
+                const barGradient = !b.taught ? undefined : b.attendanceRate >= 80 ? 'from-secondary to-secondary-dim' : b.attendanceRate >= 65 ? 'from-primary to-primary-dim' : 'from-tertiary to-tertiary-dim'
+                const rateColor = !b.taught ? 'text-on-surface-variant/60' : b.attendanceRate >= 80 ? 'text-secondary-dim' : b.attendanceRate >= 65 ? 'text-primary-dim' : 'text-tertiary-dim'
                 return (
                   <div key={i} className="px-6 py-4 flex items-center gap-4">
                     <span
@@ -208,18 +208,18 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                       style={{ background: 'rgba(255,255,255,0.05)' }}
                     >{i + 1}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-label font-medium text-on-surface truncate">{t.topic}</p>
+                      <p className="text-sm font-label font-medium text-on-surface truncate">{b.book.name}</p>
                       <div className="mt-1.5 h-1.5 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
                         {barGradient && (
-                          <div className={`h-full rounded-full bg-gradient-to-r ${barGradient}`} style={{ width: `${t.attendanceRate}%` }} />
+                          <div className={`h-full rounded-full bg-gradient-to-r ${barGradient}`} style={{ width: `${b.attendanceRate}%` }} />
                         )}
                       </div>
                     </div>
                     <div className="text-right shrink-0 w-20">
-                      {t.taught ? (
+                      {b.taught ? (
                         <>
-                          <span className={`text-sm font-black font-headline ${rateColor}`}>{t.attendanceRate}%</span>
-                          <p className="text-[10px] text-on-surface-variant/60 font-label">{t.sessions} session{t.sessions > 1 ? 's' : ''}</p>
+                          <span className={`text-sm font-black font-headline ${rateColor}`}>{b.attendanceRate}%</span>
+                          <p className="text-[10px] text-on-surface-variant/60 font-label">{b.sessions} session{b.sessions > 1 ? 's' : ''}</p>
                         </>
                       ) : (
                         <span className="text-[10px] font-label text-on-surface-variant/50 uppercase tracking-wider">Not started</span>
@@ -283,18 +283,18 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
           {/* Mobile: Topic progress */}
           <section className="space-y-3 mb-6">
             <div className="flex items-center justify-between">
-              <h3 className="font-headline text-lg font-bold">Topic Progress</h3>
+              <h3 className="font-headline text-lg font-bold">Book Progress</h3>
               <span
                 className="px-3 py-1 rounded-full text-xs font-label font-medium text-primary-dim border border-white/[0.07]"
                 style={{ background: 'rgba(255,255,255,0.04)' }}
               >
-                {taughtCount}/{topicStats.length} taught
+                {taughtCount}/{bookStats.length} taught
               </span>
             </div>
             <div className="rounded-xl overflow-hidden divide-y divide-white/[0.04] border border-white/[0.07]" style={glassCard}>
-              {topicStats.map((t, i) => {
-                const barGradient = !t.taught ? undefined : t.attendanceRate >= 80 ? 'from-secondary to-secondary-dim' : t.attendanceRate >= 65 ? 'from-primary to-primary-dim' : 'from-tertiary to-tertiary-dim'
-                const rateColor = !t.taught ? 'text-on-surface-variant/60' : t.attendanceRate >= 80 ? 'text-secondary-dim' : t.attendanceRate >= 65 ? 'text-primary-dim' : 'text-tertiary-dim'
+              {bookStats.map((b, i) => {
+                const barGradient = !b.taught ? undefined : b.attendanceRate >= 80 ? 'from-secondary to-secondary-dim' : b.attendanceRate >= 65 ? 'from-primary to-primary-dim' : 'from-tertiary to-tertiary-dim'
+                const rateColor = !b.taught ? 'text-on-surface-variant/60' : b.attendanceRate >= 80 ? 'text-secondary-dim' : b.attendanceRate >= 65 ? 'text-primary-dim' : 'text-tertiary-dim'
                 return (
                   <div key={i} className="px-4 py-3 flex items-center gap-3">
                     <span
@@ -302,14 +302,14 @@ export default function CourseDetailPage({ params }: { params: { id: string } })
                       style={{ background: 'rgba(255,255,255,0.05)' }}
                     >{i + 1}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-label font-medium text-on-surface truncate">{t.topic}</p>
+                      <p className="text-xs font-label font-medium text-on-surface truncate">{b.book.name}</p>
                       <div className="mt-1 h-1 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                        {barGradient && <div className={`h-full rounded-full bg-gradient-to-r ${barGradient}`} style={{ width: `${t.attendanceRate}%` }} />}
+                        {barGradient && <div className={`h-full rounded-full bg-gradient-to-r ${barGradient}`} style={{ width: `${b.attendanceRate}%` }} />}
                       </div>
                     </div>
                     <div className="shrink-0 text-right w-16">
-                      {t.taught
-                        ? <span className={`text-sm font-black font-headline ${rateColor}`}>{t.attendanceRate}%</span>
+                      {b.taught
+                        ? <span className={`text-sm font-black font-headline ${rateColor}`}>{b.attendanceRate}%</span>
                         : <span className="text-[9px] font-label text-on-surface-variant/50 uppercase tracking-wider">Pending</span>
                       }
                     </div>
