@@ -40,6 +40,7 @@ export default function AdminClassesPage() {
   }
 
   function startEdit(cls: Class) {
+    setShowCreate(false)
     setEditingId(cls.id)
     setEditName(cls.name)
     setEditTeacherId(cls.teacherId)
