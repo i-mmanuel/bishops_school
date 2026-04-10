@@ -19,7 +19,7 @@ export default function AdminChurchesPage() {
   const [editName, setEditName] = useState('')
   const [editDenomId, setEditDenomId] = useState<number | null>(null)
 
-  const inputClass = "rounded-lg px-3 py-1.5 text-sm text-on-surface outline-none border border-white/[0.08] focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-label"
+  const inputClass = "rounded-lg px-3 py-2 text-sm text-on-surface outline-none border border-white/[0.08] focus:border-primary/40 focus:ring-1 focus:ring-primary/20 font-label w-full"
   const inputStyle = { background: 'rgba(255,255,255,0.04)' }
   const selectClass = inputClass + " cursor-pointer"
 
@@ -79,9 +79,9 @@ export default function AdminChurchesPage() {
 
   return (
     <AdminShell>
-      <div className="p-6 md:p-8 max-w-4xl">
+      <div className="px-4 py-6 md:p-8 max-w-4xl mx-auto pb-24 md:pb-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <h1 className="text-2xl font-headline font-bold text-on-surface">Churches</h1>
           <button
             onClick={() => { setShowCreate(v => !v); setEditingId(null) }}
@@ -96,10 +96,10 @@ export default function AdminChurchesPage() {
         {/* Create form */}
         {showCreate && (
           <div
-            className="mb-6 p-4 rounded-xl border border-white/[0.08] flex flex-wrap gap-3 items-end"
+            className="mb-6 p-4 rounded-xl border border-white/[0.08] flex flex-col md:flex-row md:flex-wrap gap-3 md:items-end"
             style={{ background: 'rgba(255,255,255,0.03)' }}
           >
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 flex-1 min-w-0">
               <label className="text-[10px] uppercase tracking-wider font-label text-on-surface-variant/50">Church Name</label>
               <input
                 value={newName}
@@ -109,7 +109,7 @@ export default function AdminChurchesPage() {
                 style={inputStyle}
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 flex-1 min-w-0">
               <label className="text-[10px] uppercase tracking-wider font-label text-on-surface-variant/50">Denomination</label>
               <select
                 value={newDenomId ?? ''}
@@ -124,108 +124,180 @@ export default function AdminChurchesPage() {
             <button
               onClick={handleCreate}
               disabled={!newName.trim() || !newDenomId}
-              className="px-4 py-1.5 rounded-lg text-sm font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="w-full md:w-auto px-4 py-2 rounded-lg text-sm font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Create
             </button>
           </div>
         )}
 
-        {/* Table */}
-        <div
-          className="rounded-xl border border-white/[0.08] overflow-hidden"
-          style={{ background: 'rgba(255,255,255,0.025)' }}
-        >
-          {loading ? (
-            <p className="px-4 py-8 text-center text-on-surface-variant/40 font-label">Loading…</p>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-white/[0.06]">
-                  <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider font-label text-on-surface-variant/50">Name</th>
-                  <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider font-label text-on-surface-variant/50">Denomination</th>
-                  <th className="px-4 py-3" />
-                </tr>
-              </thead>
-              <tbody>
-                {churches.map(c => (
-                  <tr key={c.id} className="border-b border-white/[0.04] last:border-0">
-                    <td className="px-4 py-3">
-                      {editingId === c.id ? (
-                        <input
-                          value={editName}
-                          onChange={e => setEditName(e.target.value)}
-                          className={inputClass}
-                          style={inputStyle}
-                        />
-                      ) : (
-                        <span className="font-medium text-on-surface">{c.name}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {editingId === c.id ? (
-                        <select
-                          value={editDenomId ?? ''}
-                          onChange={e => setEditDenomId(e.target.value === '' ? null : Number(e.target.value))}
-                          className={selectClass}
-                          style={inputStyle}
+        {loading ? (
+          <p className="px-4 py-8 text-center text-on-surface-variant/40 font-label">Loading…</p>
+        ) : (
+          <>
+            {/* Mobile: card list */}
+            <div className="md:hidden space-y-3">
+              {churches.map(c => (
+                <div
+                  key={c.id}
+                  className="p-4 rounded-xl border border-white/[0.08]"
+                  style={{ background: 'rgba(255,255,255,0.025)' }}
+                >
+                  {editingId === c.id ? (
+                    <div className="space-y-3">
+                      <input
+                        value={editName}
+                        onChange={e => setEditName(e.target.value)}
+                        className={inputClass}
+                        style={inputStyle}
+                      />
+                      <select
+                        value={editDenomId ?? ''}
+                        onChange={e => setEditDenomId(e.target.value === '' ? null : Number(e.target.value))}
+                        className={selectClass}
+                        style={inputStyle}
+                      >
+                        <option value="">Select denomination…</option>
+                        {denominations.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                      </select>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleSaveEdit}
+                          disabled={!editName.trim() || !editDenomId}
+                          className="flex-1 px-3 py-2 rounded-lg text-xs font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
                         >
-                          <option value="">Select denomination…</option>
-                          {denominations.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
-                        </select>
-                      ) : (
-                        <span className="text-on-surface-variant/70 font-label">{denomName(c.denomination_id)}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2 justify-end">
-                        {editingId === c.id ? (
-                          <>
-                            <button
-                              onClick={handleSaveEdit}
-                              disabled={!editName.trim() || !editDenomId}
-                              className="px-3 py-1 rounded-lg text-xs font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
-                            >
-                              Save
-                            </button>
-                            <button
-                              onClick={() => setEditingId(null)}
-                              className="px-3 py-1 rounded-lg text-xs font-label text-on-surface-variant/60 border border-white/[0.08] hover:bg-surface/[0.04] transition-colors"
-                            >
-                              Cancel
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => startEdit(c)}
-                              className="px-3 py-1 rounded-lg text-xs font-label text-on-surface-variant/60 border border-white/[0.08] hover:bg-surface/[0.04] hover:text-on-surface transition-colors"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDelete(c.id)}
-                              className="px-3 py-1 rounded-lg text-xs font-label text-tertiary/60 border border-tertiary/20 hover:bg-tertiary/10 hover:text-tertiary transition-colors"
-                            >
-                              Delete
-                            </button>
-                          </>
-                        )}
+                          Save
+                        </button>
+                        <button
+                          onClick={() => setEditingId(null)}
+                          className="flex-1 px-3 py-2 rounded-lg text-xs font-label text-on-surface-variant/60 border border-white/[0.08] hover:bg-white/5 transition-colors"
+                        >
+                          Cancel
+                        </button>
                       </div>
-                    </td>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-1">
+                        <p className="font-semibold text-on-surface">{c.name}</p>
+                        <p className="text-xs text-on-surface-variant/60 font-label mt-0.5">{denomName(c.denomination_id)}</p>
+                      </div>
+                      <div className="mt-3 flex gap-2">
+                        <button
+                          onClick={() => startEdit(c)}
+                          className="flex-1 px-3 py-2 rounded-lg text-xs font-label text-on-surface-variant/70 border border-white/[0.08] hover:bg-white/5 transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(c.id)}
+                          className="flex-1 px-3 py-2 rounded-lg text-xs font-label text-tertiary/70 border border-tertiary/20 hover:bg-tertiary/10 transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              ))}
+              {churches.length === 0 && (
+                <p className="text-center text-on-surface-variant/50 py-8 text-sm font-label">No churches yet. Add one above.</p>
+              )}
+            </div>
+
+            {/* Desktop: table */}
+            <div
+              className="hidden md:block rounded-xl border border-white/[0.08] overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.025)' }}
+            >
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-white/[0.06]">
+                    <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider font-label text-on-surface-variant/50">Name</th>
+                    <th className="text-left px-4 py-3 text-[10px] uppercase tracking-wider font-label text-on-surface-variant/50">Denomination</th>
+                    <th className="px-4 py-3" />
                   </tr>
-                ))}
-                {churches.length === 0 && (
-                  <tr>
-                    <td colSpan={3} className="px-4 py-8 text-center text-on-surface-variant/40 font-label">
-                      No churches yet. Add one above.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          )}
-        </div>
+                </thead>
+                <tbody>
+                  {churches.map(c => (
+                    <tr key={c.id} className="border-b border-white/[0.04] last:border-0">
+                      <td className="px-4 py-3">
+                        {editingId === c.id ? (
+                          <input
+                            value={editName}
+                            onChange={e => setEditName(e.target.value)}
+                            className={inputClass}
+                            style={inputStyle}
+                          />
+                        ) : (
+                          <span className="font-medium text-on-surface">{c.name}</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {editingId === c.id ? (
+                          <select
+                            value={editDenomId ?? ''}
+                            onChange={e => setEditDenomId(e.target.value === '' ? null : Number(e.target.value))}
+                            className={selectClass}
+                            style={inputStyle}
+                          >
+                            <option value="">Select denomination…</option>
+                            {denominations.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                          </select>
+                        ) : (
+                          <span className="text-on-surface-variant/70 font-label">{denomName(c.denomination_id)}</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-2 justify-end">
+                          {editingId === c.id ? (
+                            <>
+                              <button
+                                onClick={handleSaveEdit}
+                                disabled={!editName.trim() || !editDenomId}
+                                className="px-3 py-1 rounded-lg text-xs font-label font-semibold bg-primary/20 text-primary-dim border border-primary/30 hover:bg-primary/30 disabled:opacity-40 transition-colors"
+                              >
+                                Save
+                              </button>
+                              <button
+                                onClick={() => setEditingId(null)}
+                                className="px-3 py-1 rounded-lg text-xs font-label text-on-surface-variant/60 border border-white/[0.08] hover:bg-surface/[0.04] transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => startEdit(c)}
+                                className="px-3 py-1 rounded-lg text-xs font-label text-on-surface-variant/60 border border-white/[0.08] hover:bg-surface/[0.04] hover:text-on-surface transition-colors"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDelete(c.id)}
+                                className="px-3 py-1 rounded-lg text-xs font-label text-tertiary/60 border border-tertiary/20 hover:bg-tertiary/10 hover:text-tertiary transition-colors"
+                              >
+                                Delete
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {churches.length === 0 && (
+                    <tr>
+                      <td colSpan={3} className="px-4 py-8 text-center text-on-surface-variant/40 font-label">
+                        No churches yet. Add one above.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
     </AdminShell>
   )
