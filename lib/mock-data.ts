@@ -522,7 +522,7 @@ export function getModuleCompletionRate(moduleId: string): number {
 
 // Institution-wide attendance rate
 export function getInstitutionHealth(): number {
-  const rates = CLASSES.map(c => getClassAttendanceRate(c.id))
+  const rates = getClasses().map(c => getClassAttendanceRate(c.id))
   return Math.round(rates.reduce((a, b) => a + b, 0) / rates.length)
 }
 export function getSchoolwideAttendanceRate(): number { return getInstitutionHealth() }

@@ -54,6 +54,7 @@ export default function AdminClassesPage() {
   }
 
   function handleDelete(id: string) {
+    if (!window.confirm('Delete this class? Students will be unassigned.')) return
     deleteClass(id)
     refresh()
   }
