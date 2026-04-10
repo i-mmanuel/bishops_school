@@ -39,7 +39,9 @@ export default function TeacherClassBreakdownPage({ params }: { params: { id: st
       const present = att.filter(a => a.status === 'present').length
       const total = att.length
       const rate = total > 0 ? Math.round((present / total) * 100) : 0
-      const topic = session.topicIndex < mod.topics.length ? mod.topics[session.topicIndex] : `Topic ${session.topicIndex + 1}`
+      const book = mod.books.find(b => b.id === session.bookId)
+      const chapterName = book?.chapters[session.chapterIndex] ?? `Chapter ${session.chapterIndex + 1}`
+      const topic = book ? `${book.name} › ${chapterName}` : `Unknown`
       return { session, present, total, rate, topic }
     })
     const avgRate = enriched.length > 0
