@@ -385,6 +385,8 @@ const runtimeAttendance: Attendance[] = []
 const runtimeClasses: Class[] = []
 const runtimeDeletedClassIds = new Set<string>()
 const runtimeStudentPatches: Record<string, Partial<Student>> = {}
+const runtimeTeachers: Teacher[] = []
+const runtimeDeletedTeacherIds = new Set<string>()
 
 // ─── Query Functions ──────────────────────────────────────────────────────────
 
@@ -409,9 +411,15 @@ export function getClassById(id: string): Class | undefined {
   return runtimeClasses.find(c => c.id === id) ?? CLASSES.find(c => c.id === id)
 }
 
-export function getTeachers(): Teacher[] { return TEACHERS }
-export function getAllTeachers(): Teacher[] { return TEACHERS }
-export function getTeacherById(id: string): Teacher | undefined { return TEACHERS.find(t => t.id === id) }
+export function getTeachers(): Teacher[] {
+  const base = TEACHERS.filter(t => !runtimeDeletedTeacherIds.has(t.id))
+  return [...base, ...runtimeTeachers]
+}
+export function getAllTeachers(): Teacher[] { return getTeachers() }
+export function getTeacherById(id: string): Teacher | undefined {
+  if (runtimeDeletedTeacherIds.has(id)) return undefined
+  return runtimeTeachers.find(t => t.id === id) ?? TEACHERS.find(t => t.id === id)
+}
 
 export function getModules(): Module[] { return MODULES }
 export function getAllModules(): Module[] { return MODULES }
@@ -772,4 +780,26 @@ export function deleteClass(id: string): void {
       runtimeStudentPatches[s.id] = { ...runtimeStudentPatches[s.id], classId: '' }
     }
   }
+}
+
+export function addTeacher(name: string): Teacher {
+  const t: Teacher = { id: `tch-${Date.now()}`, name }
+  runtimeTeachers.push(t)
+  return t
+}
+
+export function updateTeacher(id: string, patch: { name?: string }): void {
+  const inRuntime = runtimeTeachers.find(t => t.id === id)
+  if (inRuntime) {
+    if (patch.name !== undefined) inRuntime.name = patch.name
+    return
+  }
+  const inBase = TEACHERS.find(t => t.id === id)
+  if (inBase && patch.name !== undefined) inBase.name = patch.name
+}
+
+export function deleteTeacher(id: string): void {
+  const rtIdx = runtimeTeachers.findIndex(t => t.id === id)
+  if (rtIdx !== -1) { runtimeTeachers.splice(rtIdx, 1); return }
+  runtimeDeletedTeacherIds.add(id)
 }
