@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { ApiModule } from '@/lib/api-types'
-import { MagnifyingGlass, BookOpen, Funnel } from '@phosphor-icons/react'
+import { MagnifyingGlass, Funnel } from '@phosphor-icons/react'
 import CourseCard from '@/components/ui/CourseCard'
 
 interface Props {
@@ -88,12 +88,12 @@ export default function CourseDirectoryClient({ courses }: Props) {
       </div>
 
       {/* Mobile list */}
-      <div className="md:hidden space-y-4">
+      <div className="md:hidden space-y-3">
         {filtered.map(c => (
           <Link
             key={c.id}
             href={`/courses/${c.id}`}
-            className="block rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden active:scale-[0.98] transition-transform duration-200 border"
+            className="block rounded-xl p-4 relative overflow-hidden active:scale-[0.98] transition-transform duration-200 border"
             style={{
               background: 'rgba(255,255,255,0.04)',
               backdropFilter: 'blur(12px)',
@@ -101,11 +101,7 @@ export default function CourseDirectoryClient({ courses }: Props) {
               borderColor: 'rgba(255,255,255,0.07)',
             }}
           >
-            <h3 className="font-headline text-lg font-bold text-on-surface leading-tight">{c.name}</h3>
-            <div className="flex items-center gap-2 text-on-surface-variant/60 text-sm font-label">
-              <BookOpen size={14} />
-              <span>{c.books.length} books · {c.code}</span>
-            </div>
+            <h3 className="font-headline text-base font-bold text-on-surface leading-tight">{c.name}</h3>
             <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"
               style={{ background: 'rgba(6,182,212,0.05)' }} />
           </Link>
