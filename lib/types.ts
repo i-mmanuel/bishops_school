@@ -1,3 +1,8 @@
+// Legacy types used by pages still wired to mock-data.ts.
+// During the phased migration to the real API, new pages should import
+// types from `lib/api.ts` instead. Once every page has migrated, this
+// file will be deleted.
+
 export interface Principal {
   id: string
   name: string
