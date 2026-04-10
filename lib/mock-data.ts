@@ -382,6 +382,9 @@ export const ATTENDANCE: Attendance[] = [
 
 const runtimeSessions: Session[] = []
 const runtimeAttendance: Attendance[] = []
+const runtimeClasses: Class[] = []
+const runtimeDeletedClassIds = new Set<string>()
+const runtimeStudentPatches: Record<string, Partial<Student>> = {}
 
 // ─── Query Functions ──────────────────────────────────────────────────────────
 
@@ -397,7 +400,10 @@ export function getChurchById(id: string): Church | undefined { return CHURCHES.
 export function getChurchesByDenomination(denominationId: string): Church[] { return CHURCHES.filter(c => c.denominationId === denominationId) }
 export function getDenominationById(id: string): Denomination | undefined { return DENOMINATIONS.find(d => d.id === id) }
 
-export function getClasses(): Class[] { return CLASSES }
+export function getClasses(): Class[] {
+  const base = CLASSES.filter(c => !runtimeDeletedClassIds.has(c.id))
+  return [...base, ...runtimeClasses]
+}
 export function getClassById(id: string): Class | undefined { return CLASSES.find(c => c.id === id) }
 
 export function getTeachers(): Teacher[] { return TEACHERS }
@@ -411,10 +417,12 @@ export function getModuleById(id: string): Module | undefined { return MODULES.f
 export function getCourses(): Module[] { return MODULES }
 export function getCourseById(id: string): Module | undefined { return MODULES.find(m => m.id === id) }
 
-export function getStudents(): Student[] { return STUDENTS }
-export function getAllStudents(): Student[] { return STUDENTS }
+export function getStudents(): Student[] {
+  return STUDENTS.map(s => ({ ...s, ...runtimeStudentPatches[s.id] }))
+}
+export function getAllStudents(): Student[] { return getStudents() }
 export function getStudentById(id: string): Student | undefined { return STUDENTS.find(s => s.id === id) }
-export function getStudentsByClass(classId: string): Student[] { return STUDENTS.filter(s => s.classId === classId) }
+export function getStudentsByClass(classId: string): Student[] { return getStudents().filter(s => s.classId === classId) }
 // backward compat
 export function getStudentsForCourse(classId: string): Student[] { return getStudentsByClass(classId) }
 
@@ -724,4 +732,39 @@ export function submitSession(params: {
     })
   })
   return { success: true }
+}
+
+export function addClass(name: string, teacherId: string): Class {
+  const cls: Class = { id: `cls-${Date.now()}`, name, teacherId }
+  runtimeClasses.push(cls)
+  return cls
+}
+
+export function updateClass(id: string, patch: { name?: string; teacherId?: string }): void {
+  const inRuntime = runtimeClasses.find(c => c.id === id)
+  if (inRuntime) {
+    if (patch.name !== undefined) inRuntime.name = patch.name
+    if (patch.teacherId !== undefined) inRuntime.teacherId = patch.teacherId
+    return
+  }
+  const inBase = CLASSES.find(c => c.id === id)
+  if (inBase) {
+    if (patch.name !== undefined) inBase.name = patch.name
+    if (patch.teacherId !== undefined) inBase.teacherId = patch.teacherId
+  }
+}
+
+export function deleteClass(id: string): void {
+  const runtimeIdx = runtimeClasses.findIndex(c => c.id === id)
+  if (runtimeIdx !== -1) {
+    runtimeClasses.splice(runtimeIdx, 1)
+  } else {
+    runtimeDeletedClassIds.add(id)
+  }
+  // Unassign all students whose effective classId matches this class
+  for (const s of STUDENTS) {
+    if ((runtimeStudentPatches[s.id]?.classId ?? s.classId) === id) {
+      runtimeStudentPatches[s.id] = { ...runtimeStudentPatches[s.id], classId: '' }
+    }
+  }
 }
