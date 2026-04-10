@@ -21,7 +21,8 @@ export default function AttendPage() {
   const [teacherId, setTeacherId] = useState('')
   const [classId, setClassId] = useState('')
   const [moduleId, setModuleId] = useState('')
-  const [topicIndex, setTopicIndex] = useState<number | ''>('')
+  const [bookId, setBookId] = useState('')
+  const [chapterIndex, setChapterIndex] = useState<number | ''>('')
   const [statuses, setStatuses] = useState<Record<string, 'present' | 'absent'>>({})
   const [error, setError] = useState('')
   const [submitted, setSubmitted] = useState(false)
@@ -32,10 +33,15 @@ export default function AttendPage() {
     return getClassesForTeacher(teacherId)
   }, [teacherId])
 
-  const moduleTopics = useMemo(() => {
+  const moduleBooks = useMemo(() => {
     if (!moduleId) return []
-    return getModuleById(moduleId)?.topics ?? []
+    return getModuleById(moduleId)?.books ?? []
   }, [moduleId])
+
+  const bookChapters = useMemo(() => {
+    if (!bookId || moduleBooks.length === 0) return []
+    return moduleBooks.find(b => b.id === bookId)?.chapters ?? []
+  }, [bookId, moduleBooks])
 
   const students: Student[] = useMemo(() => {
     if (!classId) return []
@@ -45,7 +51,8 @@ export default function AttendPage() {
   function handleTeacherChange(id: string) {
     setTeacherId(id)
     setModuleId('')
-    setTopicIndex('')
+    setBookId('')
+    setChapterIndex('')
     setStatuses({})
     setError('')
     const classes = getClassesForTeacher(id)
@@ -60,9 +67,15 @@ export default function AttendPage() {
   }
 
   function handleClassChange(id: string) {
-    setClassId(id); setModuleId(''); setTopicIndex(''); setError('')
+    setClassId(id); setModuleId(''); setBookId(''); setChapterIndex(''); setError('')
     const s = getStudentsByClass(id)
     setStatuses(Object.fromEntries(s.map(st => [st.id, 'present'])))
+  }
+
+  function handleBookChange(id: string) {
+    setBookId(id)
+    setChapterIndex('')
+    setError('')
   }
 
   function toggleStudent(studentId: string) {
@@ -70,12 +83,12 @@ export default function AttendPage() {
   }
 
   function handleSubmit() {
-    if (!teacherId || !classId || !moduleId || topicIndex === '') return
+    if (!teacherId || !classId || !moduleId || !bookId || chapterIndex === '') return
     const today = new Date().toISOString().split('T')[0]
     const classTeacherId = getClassById(classId)?.teacherId ?? teacherId
     const result = submitSession({
       classId, moduleId, teacherId: classTeacherId, date: today,
-      topicIndex: topicIndex as number,
+      bookId, chapterIndex: chapterIndex as number,
       records: students.map(s => ({ studentId: s.id, status: statuses[s.id] ?? 'present' })),
     })
     if (!result.success) { setError(result.error ?? 'Submission failed.'); return }
@@ -85,7 +98,7 @@ export default function AttendPage() {
   }
 
   function handleSubmitAnother() {
-    setClassId(''); setModuleId(''); setTopicIndex(''); setStatuses({}); setError(''); setSubmitted(false); setSubmittedClassName('')
+    setClassId(''); setModuleId(''); setBookId(''); setChapterIndex(''); setStatuses({}); setError(''); setSubmitted(false); setSubmittedClassName('')
   }
 
   const teacher = teachers.find(t => t.id === teacherId)
@@ -131,20 +144,30 @@ export default function AttendPage() {
       {/* Module selector */}
       <div className="flex flex-col gap-1.5 mb-4">
         <label className="text-xs font-label text-on-surface-variant/60 uppercase tracking-wider">Module</label>
-        <select value={moduleId} onChange={e => { setModuleId(e.target.value); setTopicIndex(''); setError('') }}
+        <select value={moduleId} onChange={e => { setModuleId(e.target.value); setBookId(''); setChapterIndex(''); setError('') }}
           disabled={!classId} className={selectClass} style={selectStyle}>
           <option value="">Select module…</option>
           {allModules.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
         </select>
       </div>
 
-      {/* Topic selector */}
+      {/* Book selector */}
+      <div className="flex flex-col gap-1.5 mb-4">
+        <label className="text-xs font-label text-on-surface-variant/60 uppercase tracking-wider">Book</label>
+        <select value={bookId} onChange={e => handleBookChange(e.target.value)}
+          disabled={!moduleId} className={selectClass} style={selectStyle}>
+          <option value="">Select book…</option>
+          {moduleBooks.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+        </select>
+      </div>
+
+      {/* Chapter selector */}
       <div className="flex flex-col gap-1.5 mb-6">
-        <label className="text-xs font-label text-on-surface-variant/60 uppercase tracking-wider">Topic</label>
-        <select value={topicIndex} onChange={e => { setTopicIndex(e.target.value === '' ? '' : Number(e.target.value)); setError('') }}
-          disabled={!moduleId || moduleTopics.length === 0} className={selectClass} style={selectStyle}>
-          <option value="">Select topic…</option>
-          {moduleTopics.map((topic, i) => <option key={i} value={i}>{topic}</option>)}
+        <label className="text-xs font-label text-on-surface-variant/60 uppercase tracking-wider">Chapter</label>
+        <select value={chapterIndex} onChange={e => { setChapterIndex(e.target.value === '' ? '' : Number(e.target.value)); setError('') }}
+          disabled={!bookId || bookChapters.length === 0} className={selectClass} style={selectStyle}>
+          <option value="">Select chapter…</option>
+          {bookChapters.map((chapter, i) => <option key={i} value={i}>{chapter}</option>)}
         </select>
       </div>
 
@@ -167,7 +190,7 @@ export default function AttendPage() {
       {students.length > 0 && (
         <button
           onClick={handleSubmit}
-          disabled={topicIndex === ''}
+          disabled={chapterIndex === '' || !bookId}
           className="mt-6 w-full py-4 rounded-xl font-label font-semibold text-sm text-white hover:opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
           style={{ background: 'linear-gradient(135deg, #7c3aed, #06b6d4)', boxShadow: '0 0 24px rgba(124,58,237,0.35)' }}
         >
