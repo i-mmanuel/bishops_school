@@ -147,7 +147,7 @@ export default function StudentProfilePage({ params }: { params: { id: string } 
                         </div>
                         <div>
                           <h4 className="font-bold text-on-surface font-label">{mod.name}</h4>
-                          <p className="text-xs text-on-surface-variant/60 font-label">{mod.topics.length} topics · {mod.code}</p>
+                          <p className="text-xs text-on-surface-variant/60 font-label">{mod.books.length} books · {mod.code}</p>
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2 w-full sm:w-48">
