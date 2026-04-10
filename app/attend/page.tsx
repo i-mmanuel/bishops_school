@@ -1,7 +1,7 @@
 'use client'
 import { useState, useMemo } from 'react'
 import {
-  getTeachers, getTeacherModuleAssignments, getStudentsByClass,
+  getTeachers, getClassesForTeacher, getStudentsByClass,
   getClassById, getModules, getModuleById, submitSession
 } from '@/lib/mock-data'
 import type { Student } from '@/lib/types'
@@ -16,7 +16,6 @@ const selectStyle = {
 
 export default function AttendPage() {
   const teachers = getTeachers()
-  const allAssignments = getTeacherModuleAssignments()
   const allModules = getModules()
 
   const [teacherId, setTeacherId] = useState('')
@@ -30,11 +29,8 @@ export default function AttendPage() {
 
   const teacherClasses = useMemo(() => {
     if (!teacherId) return []
-    const classIds = Array.from(new Set(
-      allAssignments.filter(a => a.teacherId === teacherId).map(a => a.classId)
-    ))
-    return classIds.map(id => getClassById(id)).filter(Boolean) as NonNullable<ReturnType<typeof getClassById>>[]
-  }, [teacherId, allAssignments])
+    return getClassesForTeacher(teacherId)
+  }, [teacherId])
 
   const moduleTopics = useMemo(() => {
     if (!moduleId) return []
@@ -47,7 +43,20 @@ export default function AttendPage() {
   }, [classId])
 
   function handleTeacherChange(id: string) {
-    setTeacherId(id); setClassId(''); setModuleId(''); setTopicIndex(''); setStatuses({}); setError('')
+    setTeacherId(id)
+    setModuleId('')
+    setTopicIndex('')
+    setStatuses({})
+    setError('')
+    const classes = getClassesForTeacher(id)
+    if (classes.length === 1) {
+      const cls = classes[0]
+      setClassId(cls.id)
+      const s = getStudentsByClass(cls.id)
+      setStatuses(Object.fromEntries(s.map(st => [st.id, 'present'])))
+    } else {
+      setClassId('')
+    }
   }
 
   function handleClassChange(id: string) {
@@ -63,8 +72,9 @@ export default function AttendPage() {
   function handleSubmit() {
     if (!teacherId || !classId || !moduleId || topicIndex === '') return
     const today = new Date().toISOString().split('T')[0]
+    const classTeacherId = getClassById(classId)?.teacherId ?? teacherId
     const result = submitSession({
-      classId, moduleId, teacherId, date: today,
+      classId, moduleId, teacherId: classTeacherId, date: today,
       topicIndex: topicIndex as number,
       records: students.map(s => ({ studentId: s.id, status: statuses[s.id] ?? 'present' })),
     })
