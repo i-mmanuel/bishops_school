@@ -1,14 +1,15 @@
 'use client'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { Users, ChalkboardTeacher, BookOpen, GraduationCap } from '@phosphor-icons/react'
+import { Users, ChalkboardTeacher, BookOpen, GraduationCap, Church } from '@phosphor-icons/react'
 import BottomNav from './BottomNav'
 
 const adminLinks = [
-  { href: '/admin/classes',  label: 'Classes',  Icon: Users },
-  { href: '/admin/teachers', label: 'Teachers', Icon: ChalkboardTeacher },
-  { href: '/admin/students', label: 'Students', Icon: GraduationCap },
-  { href: '/admin/modules',  label: 'Modules',  Icon: BookOpen },
+  { href: '/admin/classes',   label: 'Classes',   Icon: Users },
+  { href: '/admin/teachers',  label: 'Teachers',  Icon: ChalkboardTeacher },
+  { href: '/admin/students',  label: 'Students',  Icon: GraduationCap },
+  { href: '/admin/modules',   label: 'Modules',   Icon: BookOpen },
+  { href: '/admin/churches',  label: 'Churches',  Icon: Church },
 ]
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
