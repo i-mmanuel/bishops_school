@@ -9,8 +9,6 @@ export default async function TeachersPage() {
     api.getAttendanceOverview(),
   ])
 
-  const totalSessions = overview.teacher_activity.reduce((acc, row) => acc + row.sessions, 0)
-
   return (
     <PrincipalShell>
       <div className="px-6 md:px-8 pt-8 pb-12 max-w-7xl mx-auto">
