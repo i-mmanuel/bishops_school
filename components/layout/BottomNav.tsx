@@ -28,16 +28,16 @@ export default function BottomNav({ currentPath }: { currentPath: string }) {
             <Link
               key={href}
               href={href}
-              className="flex flex-col items-center gap-1 min-h-[44px] px-3 py-1 justify-center"
+              className="flex flex-col items-center gap-1 min-h-[44px] flex-1 py-1 justify-center"
             >
-              <div className={`flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200
+              <div className={`flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-all duration-200
                 ${active ? 'bg-primary/20' : ''}`}>
                 <Icon
                   size={20}
                   weight={active ? 'fill' : 'regular'}
                   className={active ? 'text-primary-dim' : 'text-on-surface-variant/45'}
                 />
-                <span className={`text-[10px] font-label ${active ? 'text-primary-dim font-semibold' : 'text-on-surface-variant/45'}`}>
+                <span className={`text-[9px] font-label leading-tight ${active ? 'text-primary-dim font-semibold' : 'text-on-surface-variant/45'}`}>
                   {label}
                 </span>
               </div>
