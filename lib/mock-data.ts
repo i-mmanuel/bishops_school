@@ -404,7 +404,10 @@ export function getClasses(): Class[] {
   const base = CLASSES.filter(c => !runtimeDeletedClassIds.has(c.id))
   return [...base, ...runtimeClasses]
 }
-export function getClassById(id: string): Class | undefined { return CLASSES.find(c => c.id === id) }
+export function getClassById(id: string): Class | undefined {
+  if (runtimeDeletedClassIds.has(id)) return undefined
+  return runtimeClasses.find(c => c.id === id) ?? CLASSES.find(c => c.id === id)
+}
 
 export function getTeachers(): Teacher[] { return TEACHERS }
 export function getAllTeachers(): Teacher[] { return TEACHERS }
@@ -421,7 +424,9 @@ export function getStudents(): Student[] {
   return STUDENTS.map(s => ({ ...s, ...runtimeStudentPatches[s.id] }))
 }
 export function getAllStudents(): Student[] { return getStudents() }
-export function getStudentById(id: string): Student | undefined { return STUDENTS.find(s => s.id === id) }
+export function getStudentById(id: string): Student | undefined {
+  return getStudents().find(s => s.id === id)
+}
 export function getStudentsByClass(classId: string): Student[] { return getStudents().filter(s => s.classId === classId) }
 // backward compat
 export function getStudentsForCourse(classId: string): Student[] { return getStudentsByClass(classId) }
@@ -456,7 +461,7 @@ export function getTeachersForModule(moduleId: string): { teacher: Teacher; clas
 // Student attendance rate across all sessions in their class
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function getAttendanceRate(studentId: string, _classIdOrCourseId?: string): AttendanceRate {
-  const student = STUDENTS.find(s => s.id === studentId)
+  const student = getStudents().find(s => s.id === studentId)
   if (!student) return { present: 0, total: 0, rate: 0 }
   const sessions = getSessionsByClass(student.classId)
   const att = getAllAttendance().filter(a => a.studentId === studentId && sessions.some(s => s.id === a.sessionId))
