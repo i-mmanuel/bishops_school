@@ -391,6 +391,8 @@ const runtimeTeachers: Teacher[] = []
 const runtimeDeletedTeacherIds = new Set<string>()
 const runtimeChurches: Church[] = []
 const runtimeDeletedChurchIds = new Set<string>()
+const runtimeModules: Module[] = []
+const runtimeDeletedModuleIds = new Set<string>()
 
 // ─── Query Functions ──────────────────────────────────────────────────────────
 
@@ -433,12 +435,18 @@ export function getTeacherById(id: string): Teacher | undefined {
   return runtimeTeachers.find(t => t.id === id) ?? TEACHERS.find(t => t.id === id)
 }
 
-export function getModules(): Module[] { return MODULES }
-export function getAllModules(): Module[] { return MODULES }
-export function getModuleById(id: string): Module | undefined { return MODULES.find(m => m.id === id) }
+export function getModules(): Module[] {
+  const base = MODULES.filter(m => !runtimeDeletedModuleIds.has(m.id))
+  return [...base, ...runtimeModules]
+}
+export function getAllModules(): Module[] { return getModules() }
+export function getModuleById(id: string): Module | undefined {
+  if (runtimeDeletedModuleIds.has(id)) return undefined
+  return runtimeModules.find(m => m.id === id) ?? MODULES.find(m => m.id === id)
+}
 // backward compat aliases
-export function getCourses(): Module[] { return MODULES }
-export function getCourseById(id: string): Module | undefined { return MODULES.find(m => m.id === id) }
+export function getCourses(): Module[] { return getModules() }
+export function getCourseById(id: string): Module | undefined { return getModuleById(id) }
 
 export function getStudents(): Student[] {
   const deletedIds = runtimeDeletedStudentIds
@@ -872,4 +880,60 @@ export function deleteStudent(id: string): void {
   const rtIdx = runtimeNewStudents.findIndex(s => s.id === id)
   if (rtIdx !== -1) { runtimeNewStudents.splice(rtIdx, 1); return }
   runtimeDeletedStudentIds.add(id)
+}
+
+export function addModule(name: string, code: string): Module {
+  const m: Module = { id: `mod-${Date.now()}`, name, code, books: [] }
+  runtimeModules.push(m)
+  return m
+}
+
+export function updateModule(id: string, patch: { name?: string; code?: string }): void {
+  const inRuntime = runtimeModules.find(m => m.id === id)
+  if (inRuntime) {
+    if (patch.name !== undefined) inRuntime.name = patch.name
+    if (patch.code !== undefined) inRuntime.code = patch.code
+    return
+  }
+  const inBase = MODULES.find(m => m.id === id)
+  if (inBase) {
+    if (patch.name !== undefined) inBase.name = patch.name
+    if (patch.code !== undefined) inBase.code = patch.code
+  }
+}
+
+export function deleteModule(id: string): void {
+  const rtIdx = runtimeModules.findIndex(m => m.id === id)
+  if (rtIdx !== -1) { runtimeModules.splice(rtIdx, 1); return }
+  runtimeDeletedModuleIds.add(id)
+}
+
+export function addBook(moduleId: string, name: string): Book {
+  const mod = getModuleById(moduleId)!
+  const book: Book = { id: `${moduleId}-b${Date.now()}`, name, chapters: [] }
+  mod.books.push(book)
+  return book
+}
+
+export function updateBook(moduleId: string, bookId: string, patch: { name?: string }): void {
+  const mod = getModuleById(moduleId)!
+  const book = mod.books.find(b => b.id === bookId)
+  if (book && patch.name !== undefined) book.name = patch.name
+}
+
+export function deleteBook(moduleId: string, bookId: string): void {
+  const mod = getModuleById(moduleId)!
+  mod.books = mod.books.filter(b => b.id !== bookId)
+}
+
+export function addChapter(moduleId: string, bookId: string, name: string): void {
+  const mod = getModuleById(moduleId)!
+  const book = mod.books.find(b => b.id === bookId)!
+  book.chapters.push(name)
+}
+
+export function deleteChapter(moduleId: string, bookId: string, index: number): void {
+  const mod = getModuleById(moduleId)!
+  const book = mod.books.find(b => b.id === bookId)!
+  book.chapters.splice(index, 1)
 }
