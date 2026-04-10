@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import {
-  SquaresFour, CalendarCheck, BookOpen, Users, ChalkboardTeacher
+  SquaresFour, CalendarCheck, BookOpen, Users, ChalkboardTeacher, GearSix
 } from '@phosphor-icons/react'
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { href: '/courses',    label: 'Modules',    Icon: BookOpen },
   { href: '/students',   label: 'Students',   Icon: Users },
   { href: '/teachers',   label: 'Teachers',   Icon: ChalkboardTeacher },
+  { href: '/admin',      label: 'Admin',      Icon: GearSix },
 ]
 
 export default function Sidebar({ currentPath }: { currentPath: string }) {
