@@ -9,6 +9,7 @@ import {
   BookOpen,
   NotePencil,
 } from '@phosphor-icons/react/dist/ssr'
+import BookProgressList from './BookProgressList'
 
 const glassCard = {
   background: 'rgba(255,255,255,0.04)',
@@ -127,52 +128,11 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
               {progress.book_breakdown.filter(b => b.chapters_taught > 0).length}/{progress.book_breakdown.length} started
             </span>
           </div>
-          <div className="rounded-xl border border-white/[0.07] overflow-hidden divide-y divide-white/[0.04]" style={glassCard}>
-            {progress.book_breakdown.length === 0 && (
-              <p className="px-6 py-4 text-sm text-on-surface-variant/60 font-label">No books in this module yet.</p>
-            )}
-            {progress.book_breakdown.map((b, i) => {
-              const taught = b.chapters_taught > 0
-              const barGradient = !taught
-                ? undefined
-                : b.rate >= 80
-                  ? 'from-secondary to-secondary-dim'
-                  : b.rate >= 65
-                    ? 'from-primary to-primary-dim'
-                    : 'from-tertiary to-tertiary-dim'
-              const rateColor = !taught
-                ? 'text-on-surface-variant/60'
-                : b.rate >= 80
-                  ? 'text-secondary-dim'
-                  : b.rate >= 65
-                    ? 'text-primary-dim'
-                    : 'text-tertiary-dim'
-              return (
-                <div key={b.book_id} className="px-4 md:px-6 py-4 flex items-center gap-4">
-                  <span
-                    className="w-6 h-6 rounded-full text-[10px] font-bold font-label text-on-surface-variant/60 flex items-center justify-center shrink-0 border border-white/[0.08]"
-                    style={{ background: 'rgba(255,255,255,0.05)' }}
-                  >{i + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-label font-medium text-on-surface truncate">{b.book_name}</p>
-                    <p className="text-[10px] text-on-surface-variant/60 font-label mt-0.5">{b.chapters_taught}/{b.total_chapters} chapters taught</p>
-                    <div className="mt-1.5 h-1.5 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                      {barGradient && (
-                        <div className={`h-full rounded-full bg-gradient-to-r ${barGradient}`} style={{ width: `${b.rate}%` }} />
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-right shrink-0 w-20">
-                    {taught ? (
-                      <span className={`text-sm font-black font-headline ${rateColor}`}>{b.rate}%</span>
-                    ) : (
-                      <span className="text-[10px] font-label text-on-surface-variant/50 uppercase tracking-wider">Not started</span>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+          <BookProgressList
+            books={moduleData.books}
+            bookBreakdown={progress.book_breakdown}
+            chapterAttendance={progress.chapter_attendance}
+          />
         </div>
 
         {/* Class Breakdown */}
