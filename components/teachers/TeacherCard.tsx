@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { CaretDown } from '@phosphor-icons/react'
+import { teacherAvatar } from '@/lib/teacher-avatars'
 
 interface ClassChip {
   id: number
@@ -39,7 +40,7 @@ export default function TeacherCard({ teacher, classes, sessions, sessionsThisMo
           style={{ boxShadow: '0 0 16px rgba(124,58,237,0.2)' }}
         >
           <Image
-            src={`https://i.pravatar.cc/80?u=${teacher.id}`}
+            src={teacherAvatar(teacher)}
             alt={teacher.name}
             width={56}
             height={56}

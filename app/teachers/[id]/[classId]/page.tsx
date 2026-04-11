@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import { api } from '@/lib/api'
+import { teacherAvatar } from '@/lib/teacher-avatars'
 import { CaretLeft, BookOpen, CheckCircle, XCircle } from '@phosphor-icons/react/dist/ssr'
 
 const glassCard = {
@@ -133,7 +134,7 @@ export default async function TeacherClassBreakdownPage({
             style={{ boxShadow: '0 0 20px rgba(124,58,237,0.2)' }}
           >
             <Image
-              src={`https://i.pravatar.cc/80?u=${teacher.id}`}
+              src={teacherAvatar(teacher)}
               alt={teacher.name}
               width={64}
               height={64}
