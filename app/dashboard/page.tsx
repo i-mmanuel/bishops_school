@@ -1,6 +1,7 @@
 import Image from "next/image";
 import PrincipalShell from "@/components/layout/PrincipalShell";
 import { api } from "@/lib/api";
+import { teacherAvatar } from "@/lib/teacher-avatars";
 
 function rateColor(rate: number) {
   if (rate >= 80) return { text: "text-secondary-dim", gradient: "from-secondary to-secondary-dim" };
@@ -112,7 +113,7 @@ export default async function DashboardPage() {
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-9 h-9 rounded-full overflow-hidden border border-white/[0.08] shrink-0">
                       <Image
-                        src={`https://i.pravatar.cc/80?u=${teacher.id}`}
+                        src={teacherAvatar(teacher)}
                         alt={teacher.name}
                         width={36}
                         height={36}

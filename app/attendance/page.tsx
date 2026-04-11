@@ -2,6 +2,7 @@ import Image from 'next/image'
 import PrincipalShell from '@/components/layout/PrincipalShell'
 import Link from 'next/link'
 import { api } from '@/lib/api'
+import { teacherAvatar } from '@/lib/teacher-avatars'
 import ProgressNebula from '@/components/ui/ProgressNebula'
 import { TrendUp, WarningCircle, EnvelopeSimple, Plus } from '@phosphor-icons/react/dist/ssr'
 
@@ -308,7 +309,7 @@ export default async function AttendancePage() {
                   return (
                     <div key={t.teacher_id} className="flex items-center gap-4 p-4 rounded-xl border border-white/[0.06]" style={glassCard}>
                       <div className="w-9 h-9 rounded-full overflow-hidden border border-white/[0.08] shrink-0">
-                        <Image src={avatarFor(t.teacher_id)} alt={t.teacher_name} width={36} height={36} className="w-full h-full object-cover" />
+                        <Image src={teacherAvatar({ id: t.teacher_id, name: t.teacher_name })} alt={t.teacher_name} width={36} height={36} className="w-full h-full object-cover" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-on-surface truncate">{t.teacher_name}</p>
