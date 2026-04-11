@@ -84,14 +84,14 @@ export default function AttendPage() {
     return allModules.find(m => m.id === Number(moduleId))
   }, [moduleId, allModules])
 
-  const moduleBooks = selectedModule?.books ?? []
+  const moduleBooks = useMemo(() => selectedModule?.books ?? [], [selectedModule])
 
   const selectedBook = useMemo(() => {
     if (!bookId) return undefined
     return moduleBooks.find(b => b.id === Number(bookId))
   }, [bookId, moduleBooks])
 
-  const bookChapters = selectedBook?.chapters ?? []
+  const bookChapters = useMemo(() => selectedBook?.chapters ?? [], [selectedBook])
 
   function handleTeacherChange(id: string) {
     const num = id === '' ? '' : Number(id)
