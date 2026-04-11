@@ -224,6 +224,14 @@ export const api = {
   deleteAttendance: (id: number) =>
     request<void>(`/attendance/${id}`, { method: 'DELETE' }),
 
+  // Participation
+  submitParticipation: (body: {
+    date: string
+    teacher_id: number
+    class_id: number
+    records: Array<{ student_id: number; participation_level: 1 | 2 | 3 | 4 }>
+  }) => request<void>('/participation', { method: 'POST', body }),
+
   // Composite endpoints
   getDashboard: () => request<DashboardData>('/dashboard'),
   getAttendanceOverview: () =>
