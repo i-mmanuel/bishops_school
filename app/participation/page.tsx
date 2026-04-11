@@ -38,7 +38,7 @@ export default function ParticipationPage() {
   const [loadingStudents, setLoadingStudents] = useState(false)
   const [levels, setLevels] = useState<Record<number, 1 | 2 | 3 | 4>>({})
 
-  const [showKey, setShowKey] = useState(false)
+  const [showKey, setShowKey] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
