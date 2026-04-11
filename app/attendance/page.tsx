@@ -46,7 +46,6 @@ function avatarFor(id: number) {
 export default async function AttendancePage() {
   const overview = await api.getAttendanceOverview()
 
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })
 
   const activeModules = overview.module_attendance.filter(m => m.sessions > 0)
 
@@ -65,7 +64,6 @@ export default async function AttendancePage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div>
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight font-headline text-on-surface mb-2">Attendance Overview</h2>
-            <p className="text-on-surface-variant/60 font-label text-sm">Academic Quarter: Q3 · Today is {today}</p>
           </div>
           <div className="flex gap-3">
             <Link
