@@ -20,6 +20,7 @@ export default function AttendPage() {
   const [loadingBootstrap, setLoadingBootstrap] = useState(true)
   const [bootstrapError, setBootstrapError] = useState('')
 
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0])
   const [teacherId, setTeacherId] = useState<number | ''>('')
   const [classId, setClassId] = useState<number | ''>('')
   const [moduleId, setModuleId] = useState<number | ''>('')
@@ -146,7 +147,7 @@ export default function AttendPage() {
         class_id: Number(classId),
         module_id: Number(moduleId),
         teacher_id: Number(teacherId),
-        date: new Date().toISOString().split('T')[0],
+        date,
         book_id: Number(bookId),
         chapter_index: Number(chapterIndex),
         attendance: students.map(s => ({
@@ -212,6 +213,18 @@ export default function AttendPage() {
       <div className="mb-8">
         <p className="text-xs font-label text-on-surface-variant/60 uppercase tracking-widest mb-1">School Attendance</p>
         <h1 className="text-2xl font-headline font-bold text-on-surface tracking-tight">Mark Attendance</h1>
+      </div>
+
+      {/* Date selector */}
+      <div className="flex flex-col gap-1.5 mb-4">
+        <label className="text-xs font-label text-on-surface-variant/60 uppercase tracking-wider">Date</label>
+        <input
+          type="date"
+          value={date}
+          onChange={e => setDate(e.target.value)}
+          className={selectClass}
+          style={{ ...selectStyle, colorScheme: 'dark' }}
+        />
       </div>
 
       {/* Teacher selector */}
