@@ -45,8 +45,6 @@ export default async function CourseDetailPage({ params }: { params: { id: strin
         <nav className="hidden md:flex items-center gap-1 text-xs font-label text-on-surface-variant/60 uppercase tracking-widest mb-6">
           <Link href="/courses" className="hover:text-primary-dim transition-colors">Modules</Link>
           <CaretRight size={10} />
-          <span className="text-on-surface-variant/60">{moduleData.code}</span>
-          <CaretRight size={10} />
           <span className="text-on-surface">{moduleData.name}</span>
         </nav>
 
