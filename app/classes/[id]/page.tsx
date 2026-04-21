@@ -84,9 +84,6 @@ export default async function ClassDetailPage({ params }: { params: { id: string
                 >
                   <div className="flex items-center justify-between gap-3 mb-2">
                     <div className="flex items-center gap-3 min-w-0">
-                      <span className="text-[10px] font-label font-bold text-primary-dim bg-primary/10 border border-primary/20 rounded px-2 py-0.5 shrink-0">
-                        {mod.code}
-                      </span>
                       <div className="min-w-0">
                         <p className="font-semibold text-on-surface text-sm truncate">{mod.name}</p>
                         <p className="text-[10px] text-on-surface-variant/60 font-label">

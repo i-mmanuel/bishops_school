@@ -53,7 +53,7 @@ export default async function ClassModuleDetailPage({
         <div className="mb-8">
           <p className="text-xs font-label text-on-surface-variant/60 uppercase tracking-widest mb-1">{schoolClass.name} · Module</p>
           <h1 className="text-3xl md:text-4xl font-extrabold font-headline tracking-tight text-on-surface">{mod.name}</h1>
-          <p className="text-sm text-on-surface-variant/60 font-label mt-1">{mod.code} · {mod.books.length} books · {totalChapters} chapters</p>
+          <p className="text-sm text-on-surface-variant/60 font-label mt-1">{mod.books.length} books · {totalChapters} chapters</p>
         </div>
 
         {/* KPI */}

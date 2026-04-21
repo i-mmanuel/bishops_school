@@ -189,7 +189,7 @@ export default async function TeacherClassBreakdownPage({
                     </div>
                     <div>
                       <p className="font-bold text-sm font-headline text-on-surface">{mod.name}</p>
-                      <p className="text-[10px] text-on-surface-variant/60 font-label">{mod.code} · {entries.length} session{entries.length !== 1 ? 's' : ''}</p>
+                      <p className="text-[10px] text-on-surface-variant/60 font-label">{entries.length} session{entries.length !== 1 ? 's' : ''}</p>
                     </div>
                   </div>
                   {entries.length > 0 && (
