@@ -2,9 +2,9 @@ import type { ApiModule } from '@/lib/api-types'
 import Link from 'next/link'
 import { BookOpen } from '@phosphor-icons/react/dist/ssr'
 
-interface Props { course: ApiModule }
+interface Props { course: ApiModule; hasSessions?: boolean }
 
-export default function CourseCard({ course }: Props) {
+export default function CourseCard({ course, hasSessions = false }: Props) {
   return (
     <Link
       href={`/courses/${course.id}`}
@@ -21,6 +21,12 @@ export default function CourseCard({ course }: Props) {
         <BookOpen size={20} />
       </div>
       <h3 className="text-lg font-bold font-headline text-on-surface leading-tight flex-1 min-w-0">{course.name}</h3>
+      {hasSessions && (
+        <span className="flex items-center gap-1.5 shrink-0 text-[10px] font-bold uppercase tracking-wider font-label text-secondary-dim">
+          <span className="w-1.5 h-1.5 rounded-full bg-secondary-dim" style={{ boxShadow: '0 0 8px rgba(6,182,212,0.6)' }} />
+          In Progress
+        </span>
+      )}
     </Link>
   )
 }

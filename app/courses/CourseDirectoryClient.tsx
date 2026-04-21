@@ -7,10 +7,12 @@ import CourseCard from '@/components/ui/CourseCard'
 
 interface Props {
   courses: ApiModule[]
+  taughtModuleIds: number[]
 }
 
-export default function CourseDirectoryClient({ courses }: Props) {
+export default function CourseDirectoryClient({ courses, taughtModuleIds }: Props) {
   const [query, setQuery] = useState('')
+  const taughtSet = new Set(taughtModuleIds)
 
   const filtered = courses.filter(c =>
     c.name.toLowerCase().includes(query.toLowerCase()) ||
@@ -63,11 +65,10 @@ export default function CourseDirectoryClient({ courses }: Props) {
         </div>
       </div>
 
-      {/* Mobile curation header */}
+      {/* Mobile section header */}
       <div className="md:hidden flex justify-between items-end mb-6">
         <div>
-          <p className="text-secondary-dim text-xs font-bold tracking-widest uppercase font-label mb-1">Curation</p>
-          <h2 className="font-headline text-2xl font-bold tracking-tight">Active Directories</h2>
+          <h2 className="font-headline text-2xl font-bold tracking-tight">Directories</h2>
         </div>
         <span
           className="text-on-surface-variant/60 text-xs font-medium px-3 py-1 rounded-full font-label border border-white/[0.07]"
@@ -80,7 +81,7 @@ export default function CourseDirectoryClient({ courses }: Props) {
       {/* Desktop grid */}
       <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.map(c => (
-          <CourseCard key={c.id} course={c} />
+          <CourseCard key={c.id} course={c} hasSessions={taughtSet.has(c.id)} />
         ))}
         {filtered.length === 0 && (
           <p className="text-sm font-label text-on-surface-variant/60 col-span-3">No modules match your search.</p>
@@ -89,23 +90,34 @@ export default function CourseDirectoryClient({ courses }: Props) {
 
       {/* Mobile list */}
       <div className="md:hidden space-y-3">
-        {filtered.map(c => (
-          <Link
-            key={c.id}
-            href={`/courses/${c.id}`}
-            className="block rounded-xl p-4 relative overflow-hidden active:scale-[0.98] transition-transform duration-200 border"
-            style={{
-              background: 'rgba(255,255,255,0.04)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              borderColor: 'rgba(255,255,255,0.07)',
-            }}
-          >
-            <h3 className="font-headline text-base font-bold text-on-surface leading-tight">{c.name}</h3>
-            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"
-              style={{ background: 'rgba(6,182,212,0.05)' }} />
-          </Link>
-        ))}
+        {filtered.map(c => {
+          const hasSessions = taughtSet.has(c.id)
+          return (
+            <Link
+              key={c.id}
+              href={`/courses/${c.id}`}
+              className="block rounded-xl p-4 relative overflow-hidden active:scale-[0.98] transition-transform duration-200 border"
+              style={{
+                background: 'rgba(255,255,255,0.04)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                borderColor: 'rgba(255,255,255,0.07)',
+              }}
+            >
+              <div className="flex items-center justify-between gap-3 relative z-10">
+                <h3 className="font-headline text-base font-bold text-on-surface leading-tight">{c.name}</h3>
+                {hasSessions && (
+                  <span className="flex items-center gap-1.5 shrink-0 text-[10px] font-bold uppercase tracking-wider font-label text-secondary-dim">
+                    <span className="w-1.5 h-1.5 rounded-full bg-secondary-dim" style={{ boxShadow: '0 0 8px rgba(6,182,212,0.6)' }} />
+                    In Progress
+                  </span>
+                )}
+              </div>
+              <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"
+                style={{ background: 'rgba(6,182,212,0.05)' }} />
+            </Link>
+          )
+        })}
         {filtered.length === 0 && (
           <p className="text-sm font-label text-on-surface-variant/60">No modules match your search.</p>
         )}

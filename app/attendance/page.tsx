@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { api } from '@/lib/api'
 import { teacherAvatar } from '@/lib/teacher-avatars'
 import ProgressNebula from '@/components/ui/ProgressNebula'
-import { TrendUp, WarningCircle, EnvelopeSimple, Plus } from '@phosphor-icons/react/dist/ssr'
+import { TrendUp, WarningCircle, EnvelopeSimple, Plus, BookOpen } from '@phosphor-icons/react/dist/ssr'
 
 function presenceBadgeClass(rate: number) {
   if (rate >= 80) return {
@@ -191,7 +191,6 @@ export default async function AttendancePage() {
                   <div className="absolute top-0 right-0 w-32 h-32 rounded-full -mr-16 -mt-16 blur-3xl" style={{ background: 'rgba(6,182,212,0.05)' }} />
                   <div className="flex justify-between items-start relative z-10">
                     <div className="space-y-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider font-label text-secondary-dim">{mod.code}</span>
                       <h3 className="text-base font-bold text-on-surface font-headline">{mod.module_name}</h3>
                       <p className="text-xs text-on-surface-variant/60 font-label">{mod.sessions} sessions · {mod.topics} chapters</p>
                     </div>
@@ -272,10 +271,10 @@ export default async function AttendancePage() {
                       style={glassRow}>
                       <div className="flex items-center gap-5">
                         <div
-                          className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center border border-secondary/20 shrink-0"
+                          className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center border border-secondary/20 shrink-0 text-secondary-dim"
                           style={{ background: 'rgba(6,182,212,0.06)' }}
                         >
-                          <span className="text-xs font-black font-headline text-secondary-dim">{mod.code}</span>
+                          <BookOpen size={20} />
                         </div>
                         <div>
                           <h4 className="font-bold text-base leading-tight text-on-surface">{mod.module_name}</h4>
