@@ -4,6 +4,10 @@ import CourseDirectoryClient from './CourseDirectoryClient'
 
 export default async function CoursesPage() {
   const modules = await api.listModules()
+  const progresses = await Promise.all(modules.map(m => api.getModuleProgress(m.id)))
+  const taughtModuleIds = new Set(
+    progresses.filter(p => p.chapters_taught > 0).map(p => p.module.id)
+  )
 
   return (
     <PrincipalShell>
@@ -33,7 +37,7 @@ export default async function CoursesPage() {
           <h1 className="text-2xl font-bold font-headline tracking-tight">Module Directory</h1>
         </div>
 
-        <CourseDirectoryClient courses={modules} />
+        <CourseDirectoryClient courses={modules} taughtModuleIds={Array.from(taughtModuleIds)} />
       </div>
     </PrincipalShell>
   )
