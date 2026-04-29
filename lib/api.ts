@@ -206,13 +206,13 @@ export const api = {
     teacher_id: number
     date: string
     book_id: number
-    chapter_index: number
+    chapter_indices: number[]
     attendance: Array<{
       student_id: number
       status: 'present' | 'absent'
       participation_level?: number
     }>
-  }) => request<ApiSession>('/sessions', { method: 'POST', body }),
+  }) => request<ApiSession[]>('/sessions', { method: 'POST', body }),
   deleteSession: (id: number) =>
     request<void>(`/sessions/${id}`, { method: 'DELETE' }),
 

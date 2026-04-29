@@ -25,7 +25,7 @@ export default function AttendPage() {
   const [classId, setClassId] = useState<number | ''>('')
   const [moduleId, setModuleId] = useState<number | ''>('')
   const [bookId, setBookId] = useState<number | ''>('')
-  const [chapterIndex, setChapterIndex] = useState<number | ''>('')
+  const [chapterIndices, setChapterIndices] = useState<number[]>([])
 
   const [students, setStudents] = useState<ApiStudent[]>([])
   const [statuses, setStatuses] = useState<Record<number, 'present' | 'absent'>>({})
@@ -99,7 +99,7 @@ export default function AttendPage() {
     setClassId('')
     setModuleId('')
     setBookId('')
-    setChapterIndex('')
+    setChapterIndices([])
     setError('')
     if (num !== '') {
       const classes = allClasses.filter(c => c.teacher_id === num)
@@ -114,20 +114,20 @@ export default function AttendPage() {
     setClassId(num)
     setModuleId('')
     setBookId('')
-    setChapterIndex('')
+    setChapterIndices([])
     setError('')
   }
 
   function handleModuleChange(id: string) {
     setModuleId(id === '' ? '' : Number(id))
     setBookId('')
-    setChapterIndex('')
+    setChapterIndices([])
     setError('')
   }
 
   function handleBookChange(id: string) {
     setBookId(id === '' ? '' : Number(id))
-    setChapterIndex('')
+    setChapterIndices([])
     setError('')
   }
 
@@ -138,8 +138,15 @@ export default function AttendPage() {
     }))
   }
 
+  function toggleChapter(index: number) {
+    setChapterIndices(prev =>
+      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index].sort((a, b) => a - b)
+    )
+    setError('')
+  }
+
   async function handleSubmit() {
-    if (!teacherId || !classId || !moduleId || !bookId || chapterIndex === '') return
+    if (!teacherId || !classId || !moduleId || !bookId || chapterIndices.length === 0) return
     setSubmitting(true)
     setError('')
     try {
@@ -149,7 +156,7 @@ export default function AttendPage() {
         teacher_id: Number(teacherId),
         date,
         book_id: Number(bookId),
-        chapter_index: Number(chapterIndex),
+        chapter_indices: chapterIndices,
         attendance: students.map(s => ({
           student_id: s.id,
           status: statuses[s.id] ?? 'present',
@@ -169,7 +176,7 @@ export default function AttendPage() {
     setClassId('')
     setModuleId('')
     setBookId('')
-    setChapterIndex('')
+    setChapterIndices([])
     setStatuses({})
     setStudents([])
     setError('')
@@ -269,15 +276,48 @@ export default function AttendPage() {
         </select>
       </div>
 
-      {/* Chapter selector */}
+      {/* Chapter selector (multi-select) */}
       <div className="flex flex-col gap-1.5 mb-6">
-        <label className="text-xs font-label text-on-surface-variant/60 uppercase tracking-wider">Chapter</label>
-        <select value={chapterIndex}
-          onChange={e => { setChapterIndex(e.target.value === '' ? '' : Number(e.target.value)); setError('') }}
-          disabled={!bookId || bookChapters.length === 0} className={selectClass} style={selectStyle}>
-          <option value="">Select chapter…</option>
-          {bookChapters.map((chapter, i) => <option key={i} value={i}>{chapter}</option>)}
-        </select>
+        <label className="text-xs font-label text-on-surface-variant/60 uppercase tracking-wider">
+          Chapters {chapterIndices.length > 0 && <span className="text-on-surface-variant/40 normal-case tracking-normal">· {chapterIndices.length} selected</span>}
+        </label>
+        {!bookId || bookChapters.length === 0 ? (
+          <div className={`${selectClass} text-on-surface-variant/40`} style={selectStyle}>
+            Select a book first…
+          </div>
+        ) : (
+          <div className="flex flex-col gap-1.5">
+            {bookChapters.map((chapter, i) => {
+              const checked = chapterIndices.includes(i)
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => toggleChapter(i)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-sm font-label text-left transition-all duration-200 active:scale-[0.99] ${
+                    checked
+                      ? 'border-primary/40 bg-primary/[0.08] text-on-surface'
+                      : 'border-white/[0.08] text-on-surface hover:border-white/[0.16]'
+                  }`}
+                  style={selectStyle}
+                >
+                  <span
+                    className={`flex items-center justify-center w-5 h-5 rounded border transition-all ${
+                      checked ? 'border-primary bg-primary text-white' : 'border-white/[0.24]'
+                    }`}
+                  >
+                    {checked && (
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                        <path d="M2.5 6.5L4.75 8.75L9.5 4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    )}
+                  </span>
+                  <span className="flex-1">{chapter}</span>
+                </button>
+              )
+            })}
+          </div>
+        )}
       </div>
 
       {/* Student list */}
@@ -299,7 +339,7 @@ export default function AttendPage() {
       {students.length > 0 && (
         <button
           onClick={handleSubmit}
-          disabled={chapterIndex === '' || !bookId || submitting}
+          disabled={chapterIndices.length === 0 || !bookId || submitting}
           className="mt-6 w-full py-4 rounded-xl font-label font-semibold text-sm text-white hover:opacity-90 active:scale-[0.98] transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
           style={{ background: 'linear-gradient(135deg, #7c3aed, #06b6d4)', boxShadow: '0 0 24px rgba(124,58,237,0.35)' }}
         >
