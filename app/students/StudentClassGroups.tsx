@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { CaretDown } from '@phosphor-icons/react'
+import { CaretDown, MagnifyingGlass, X } from '@phosphor-icons/react'
 import type { ApiStudent } from '@/lib/api-types'
 import { teacherAvatar } from '@/lib/teacher-avatars'
 
@@ -86,6 +86,7 @@ function ClassAccordion({ group, forceOpen }: { group: ClassGroup; forceOpen?: b
 
 export default function StudentClassGroups({ teacherGroups }: Props) {
   const [expanded, setExpanded] = useState<Record<number, boolean>>({})
+  const [query, setQuery] = useState('')
 
   function toggle(teacherId: number) {
     setExpanded(prev => ({ ...prev, [teacherId]: !prev[teacherId] }))
@@ -93,6 +94,29 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
 
   return (
     <div className="space-y-4">
+      {/* Search input */}
+      <div
+        className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/[0.07]"
+        style={{ background: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+      >
+        <MagnifyingGlass size={16} weight="bold" className="text-on-surface-variant/50 shrink-0" />
+        <input
+          type="text"
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+          placeholder="Search students, classes or teachers…"
+          className="flex-1 bg-transparent text-sm text-on-surface placeholder:text-on-surface-variant/40 outline-none font-label"
+        />
+        {query && (
+          <button
+            onClick={() => setQuery('')}
+            className="text-on-surface-variant/40 hover:text-on-surface-variant/70 transition-colors shrink-0"
+          >
+            <X size={14} weight="bold" />
+          </button>
+        )}
+      </div>
+
       {teacherGroups.map(tg => {
         const isOpen = !!expanded[tg.teacherId]
         return (
