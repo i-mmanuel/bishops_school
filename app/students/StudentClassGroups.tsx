@@ -92,6 +92,27 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
     setExpanded(prev => ({ ...prev, [teacherId]: !prev[teacherId] }))
   }
 
+  const normalised = query.trim().toLowerCase()
+  const isSearching = normalised !== ''
+
+  const filteredGroups = isSearching
+    ? teacherGroups
+        .map(tg => {
+          if (tg.teacherName.toLowerCase().includes(normalised)) return tg
+          const classes = tg.classes
+            .map(cls => {
+              if (cls.className.toLowerCase().includes(normalised)) return cls
+              const students = cls.students.filter(s =>
+                s.name.toLowerCase().includes(normalised)
+              )
+              return students.length > 0 ? { ...cls, students } : null
+            })
+            .filter((cls): cls is ClassGroup => cls !== null)
+          return classes.length > 0 ? { ...tg, classes } : null
+        })
+        .filter((tg): tg is TeacherGroup => tg !== null)
+    : teacherGroups
+
   return (
     <div className="space-y-4">
       {/* Search input */}
@@ -117,8 +138,16 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
         )}
       </div>
 
-      {teacherGroups.map(tg => {
-        const isOpen = !!expanded[tg.teacherId]
+      {/* Empty state */}
+      {filteredGroups.length === 0 && (
+        <p className="text-on-surface-variant/50 text-sm font-label text-center py-12">
+          No students match your search.
+        </p>
+      )}
+
+      {filteredGroups.map(tg => {
+        const isOpen = isSearching || !!expanded[tg.teacherId]
+        const visibleStudents = tg.classes.reduce((sum, cls) => sum + cls.students.length, 0)
         return (
           <section
             key={tg.teacherId}
@@ -127,7 +156,7 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
           >
             {/* Teacher header */}
             <button
-              onClick={() => toggle(tg.teacherId)}
+              onClick={() => { if (!isSearching) toggle(tg.teacherId) }}
               className="w-full flex items-center gap-3 p-4 md:p-5 text-left hover:bg-white/[0.02] transition-colors"
             >
               <div
@@ -145,7 +174,7 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
               <div className="flex-1 min-w-0">
                 <h2 className="text-base md:text-lg font-bold font-headline text-on-surface truncate">{tg.teacherName}</h2>
                 <p className="text-xs text-on-surface-variant/60 font-label">
-                  {tg.totalStudents} student{tg.totalStudents !== 1 ? 's' : ''} · {tg.classes.length} class{tg.classes.length !== 1 ? 'es' : ''}
+                  {visibleStudents} student{visibleStudents !== 1 ? 's' : ''} · {tg.classes.length} class{tg.classes.length !== 1 ? 'es' : ''}
                 </p>
               </div>
               <CaretDown
@@ -159,7 +188,11 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
             {isOpen && (
               <div className="border-t border-white/[0.06] p-3 md:p-4 flex flex-col gap-2">
                 {tg.classes.map(cls => (
-                  <ClassAccordion key={cls.classId} group={cls} />
+                  <ClassAccordion
+                    key={cls.classId}
+                    group={cls}
+                    forceOpen={isSearching ? true : undefined}
+                  />
                 ))}
               </div>
             )}
