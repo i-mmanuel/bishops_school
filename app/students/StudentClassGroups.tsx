@@ -139,7 +139,7 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
       </div>
 
       {/* Empty state */}
-      {filteredGroups.length === 0 && (
+      {isSearching && filteredGroups.length === 0 && (
         <p className="text-on-surface-variant/50 text-sm font-label text-center py-12">
           No students match your search.
         </p>
