@@ -36,6 +36,7 @@ function ClassAccordion({ group, forceOpen }: { group: ClassGroup; forceOpen?: b
       style={{ background: 'rgba(255,255,255,0.025)' }}
     >
       <button
+        type="button"
         onClick={() => { if (!forceOpen) setOpen(v => !v) }}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.02] transition-colors"
       >
@@ -130,6 +131,7 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
         />
         {query && (
           <button
+            type="button"
             onClick={() => setQuery('')}
             className="text-on-surface-variant/40 hover:text-on-surface-variant/70 transition-colors shrink-0"
           >
@@ -156,6 +158,7 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
           >
             {/* Teacher header */}
             <button
+              type="button"
               onClick={() => { if (!isSearching) toggle(tg.teacherId) }}
               className="w-full flex items-center gap-3 p-4 md:p-5 text-left hover:bg-white/[0.02] transition-colors"
             >
