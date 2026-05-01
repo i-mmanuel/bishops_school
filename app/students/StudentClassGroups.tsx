@@ -99,7 +99,6 @@ export default function StudentClassGroups({ teacherGroups }: Props) {
   const filteredGroups = isSearching
     ? teacherGroups
         .map(tg => {
-          if (tg.teacherName.toLowerCase().includes(normalised)) return tg
           const classes = tg.classes
             .map(cls => {
               if (cls.className.toLowerCase().includes(normalised)) return cls
