@@ -68,7 +68,7 @@ function ClassAccordion({ group, forceOpen }: { group: ClassGroup; forceOpen?: b
                     alt={student.name}
                     width={32}
                     height={32}
-                    unoptimized={!!student.image}
+                    unoptimized
                     className="w-full h-full object-cover"
                   />
                 </div>

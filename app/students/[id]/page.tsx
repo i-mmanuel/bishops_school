@@ -69,7 +69,7 @@ export default async function StudentProfilePage({ params }: { params: { id: str
                   alt={student.name}
                   width={192}
                   height={192}
-                  unoptimized={!!rawStudent.image}
+                  unoptimized
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -197,7 +197,7 @@ export default async function StudentProfilePage({ params }: { params: { id: str
                   alt={student.name}
                   width={128}
                   height={128}
-                  unoptimized={!!rawStudent.image}
+                  unoptimized
                   className="w-full h-full object-cover"
                 />
               </div>

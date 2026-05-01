@@ -51,7 +51,7 @@ export default function StudentToggleList({ students, statuses, onToggle }: Prop
                   alt={student.name}
                   width={36}
                   height={36}
-                  unoptimized={!!student.image}
+                  unoptimized
                   className="w-full h-full object-cover"
                 />
               </div>
