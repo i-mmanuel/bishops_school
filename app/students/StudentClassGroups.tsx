@@ -27,15 +27,16 @@ function getStudentAvatarUrl(student: { id: number; image: string | null; gender
   return `https://avatar.iran.liara.run/public/${gender}?username=${student.id}`
 }
 
-function ClassAccordion({ group }: { group: ClassGroup }) {
+function ClassAccordion({ group, forceOpen }: { group: ClassGroup; forceOpen?: boolean }) {
   const [open, setOpen] = useState(false)
+  const isOpen = forceOpen ?? open
   return (
     <div
       className="rounded-xl border border-white/[0.06] overflow-hidden"
       style={{ background: 'rgba(255,255,255,0.025)' }}
     >
       <button
-        onClick={() => setOpen(v => !v)}
+        onClick={() => { if (!forceOpen) setOpen(v => !v) }}
         className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-white/[0.02] transition-colors"
       >
         <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center shrink-0">
@@ -46,11 +47,11 @@ function ClassAccordion({ group }: { group: ClassGroup }) {
         <CaretDown
           size={14}
           weight="bold"
-          className={`text-on-surface-variant/40 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`text-on-surface-variant/40 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 
-      {open && (
+      {isOpen && (
         <div className="border-t border-white/[0.05] p-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             {group.students.map(student => (
