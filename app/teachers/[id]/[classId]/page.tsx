@@ -205,7 +205,7 @@ export default async function TeacherClassBreakdownPage({
                   {entries.map(({ sessionId, present, absent, rate, date, topic }) => {
                     const sRateColor = rate >= 80 ? 'text-secondary-dim' : rate >= 65 ? 'text-primary-dim' : 'text-tertiary-dim'
                     const sBarGradient = rate >= 80 ? 'from-secondary to-secondary-dim' : rate >= 65 ? 'from-primary to-primary-dim' : 'from-tertiary to-tertiary-dim'
-                    const displayDate = new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                    const displayDate = new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
                     return (
                       <div key={sessionId} className="px-5 py-4 flex items-center gap-4">
                         <div className="flex-1 min-w-0">

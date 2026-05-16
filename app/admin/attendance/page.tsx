@@ -74,7 +74,7 @@ function SessionRow({ session, classes, modules, teachers, onDelete }: SessionRo
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-on-surface text-sm">{className} · {moduleObj?.name ?? '?'}</p>
           <p className="text-xs text-on-surface-variant/60 font-label mt-0.5">
-            {new Date(session.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            {new Date(session.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })}
             {' · '}
             {teacherName}
             {book && ` · ${book.name} › ${chapterName}`}
