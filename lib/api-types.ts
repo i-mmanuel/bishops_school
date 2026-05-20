@@ -97,7 +97,6 @@ export interface TeacherTarget {
   id: number
   name: string
   rate: number
-  rating: 'Excellent' | 'Good' | 'Needs Improvement'
 }
 
 export interface DashboardData {
