@@ -229,3 +229,41 @@ export interface ModuleProgress {
   book_breakdown: ModuleBookBreakdown[]
   chapter_attendance: ChapterAttendanceRow[]
 }
+
+export interface TeacherCoverageChapter {
+  index: number
+  title: string
+  taught: boolean
+  last_taught_date: string | null
+}
+
+export interface TeacherCoverageBook {
+  id: number
+  name: string
+  position: number
+  chapters: TeacherCoverageChapter[]
+}
+
+export interface TeacherCoverageClass {
+  id: number
+  name: string
+}
+
+export interface TeacherCoverageModule {
+  id: number
+  name: string
+  code: string
+  rate: number
+  taught_chapters: number
+  total_chapters: number
+  classes: TeacherCoverageClass[]
+  books: TeacherCoverageBook[]
+}
+
+export interface TeacherCoverage {
+  teacher: { id: number; name: string }
+  rate: number
+  taught_chapters: number
+  total_chapters: number
+  modules: TeacherCoverageModule[]
+}
