@@ -13,6 +13,7 @@ import type {
   DashboardData,
   ModuleProgress,
   StudentProfile,
+  TeacherCoverage,
   TeacherStats,
 } from './api-types'
 
@@ -246,6 +247,8 @@ export const api = {
     request<StudentProfile>(`/students/${id}/profile`),
   getTeacherStats: (id: number) =>
     request<TeacherStats>(`/teachers/${id}/stats`),
+  getTeacherCoverage: (id: number) =>
+    request<TeacherCoverage>(`/teachers/${id}/coverage`),
   getModuleProgress: (id: number) =>
     request<ModuleProgress>(`/modules/${id}/progress`),
 }
