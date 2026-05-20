@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import PrincipalShell from "@/components/layout/PrincipalShell";
 import { api } from "@/lib/api";
 import { teacherAvatar } from "@/lib/teacher-avatars";
@@ -116,9 +117,10 @@ export default async function DashboardPage() {
             {dashboard.teacher_targets.map((teacher) => {
               const { text, gradient } = rateColor(teacher.rate);
               return (
-                <div
+                <Link
                   key={teacher.id}
-                  className="p-4 rounded-xl border border-white/[0.06]"
+                  href={`/teachers/${teacher.id}`}
+                  className="block p-4 rounded-xl border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.02] transition-colors"
                   style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
                 >
                   <div className="flex items-center gap-3 mb-3">
@@ -146,7 +148,7 @@ export default async function DashboardPage() {
                       style={{ width: `${teacher.rate}%` }}
                     />
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
