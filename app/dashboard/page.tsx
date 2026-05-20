@@ -4,12 +4,6 @@ import PrincipalShell from "@/components/layout/PrincipalShell";
 import { api } from "@/lib/api";
 import { teacherAvatar } from "@/lib/teacher-avatars";
 
-function rateColor(rate: number) {
-  if (rate >= 80) return { text: "text-secondary-dim", gradient: "from-secondary to-secondary-dim" };
-  if (rate >= 65) return { text: "text-primary-dim", gradient: "from-primary to-primary-dim" };
-  return { text: "text-tertiary-dim", gradient: "from-tertiary to-tertiary-dim" };
-}
-
 export default async function DashboardPage() {
   const dashboard = await api.getDashboard();
   const modules = await api.listModules();
@@ -114,43 +108,40 @@ export default async function DashboardPage() {
             Teachers Targets
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {dashboard.teacher_targets.map((teacher) => {
-              const { text, gradient } = rateColor(teacher.rate);
-              return (
-                <Link
-                  key={teacher.id}
-                  href={`/teachers/${teacher.id}`}
-                  className="block p-4 rounded-xl border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.02] transition-colors"
-                  style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-9 h-9 rounded-full overflow-hidden border border-white/[0.08] shrink-0">
-                      <Image
-                        src={teacherAvatar(teacher)}
-                        alt={teacher.name}
-                        width={36}
-                        height={36}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-on-surface truncate">
-                        {teacher.name}
-                      </p>
-                    </div>
-                    <span className={`text-xl font-black font-headline ${text}`}>
-                      {teacher.rate}%
-                    </span>
-                  </div>
-                  <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
-                    <div
-                      className={`h-full rounded-full bg-gradient-to-r ${gradient}`}
-                      style={{ width: `${teacher.rate}%` }}
+            {dashboard.teacher_targets.map((teacher) => (
+              <Link
+                key={teacher.id}
+                href={`/teachers/${teacher.id}`}
+                className="block p-4 rounded-xl border border-white/[0.06] hover:border-white/[0.12] hover:bg-white/[0.02] transition-colors"
+                style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
+              >
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-full overflow-hidden border border-white/[0.08] shrink-0">
+                    <Image
+                      src={teacherAvatar(teacher)}
+                      alt={teacher.name}
+                      width={36}
+                      height={36}
+                      className="w-full h-full object-cover"
                     />
                   </div>
-                </Link>
-              );
-            })}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-on-surface truncate">
+                      {teacher.name}
+                    </p>
+                  </div>
+                  <span className="text-xl font-black font-headline text-primary-dim">
+                    {teacher.rate}%
+                  </span>
+                </div>
+                <div className="h-1.5 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-primary to-primary-dim"
+                    style={{ width: `${teacher.rate}%` }}
+                  />
+                </div>
+              </Link>
+            ))}
           </div>
         </section>
       </div>
