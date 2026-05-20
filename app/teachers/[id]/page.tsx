@@ -79,7 +79,7 @@ export default async function TeacherCoveragePage({
                 {coverage.teacher.name}
               </h1>
               <p className="text-sm text-on-surface-variant/60 font-label mt-1">
-                Lesson coverage across assigned modules
+                Lesson coverage across all modules
               </p>
             </div>
             <div className="text-right shrink-0">
@@ -109,7 +109,7 @@ export default async function TeacherCoveragePage({
             style={glassCard}
           >
             <p className="text-on-surface-variant/70 font-label text-sm">
-              No modules assigned to this teacher yet.
+              No modules in the system yet.
             </p>
           </div>
         )}
