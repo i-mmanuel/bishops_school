@@ -304,7 +304,12 @@ export default async function AttendancePage() {
 
             {/* Teacher performance */}
             <div className="space-y-4 mt-8">
-              <h3 className="text-lg font-bold font-headline text-on-surface">Teacher Activity</h3>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold font-headline text-on-surface">Teacher Activity</h3>
+                <p className="text-xs text-on-surface-variant/60 font-label">
+                  Share of all sessions taught by each teacher. Percentages sum to 100%.
+                </p>
+              </div>
               <div className="space-y-3">
                 {overview.teacher_activity.map(t => {
                   const barGradient = 'from-primary to-primary-dim'
