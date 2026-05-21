@@ -39,8 +39,13 @@ const glassRow = {
   WebkitBackdropFilter: 'blur(12px)',
 }
 
-function avatarFor(id: number) {
-  return `https://i.pravatar.cc/80?u=${id}`
+function initials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(s => s[0]?.toUpperCase() ?? '')
+    .join('')
 }
 
 export default async function AttendancePage() {
@@ -123,8 +128,8 @@ export default async function AttendancePage() {
               <Link key={`mob-${a.student_id}`} href={`/students/${a.student_id}`}
                 className="p-4 rounded-2xl flex items-center gap-4 border-l-4 border-tertiary transition-colors border border-tertiary/20"
                 style={{ background: 'rgba(244,63,94,0.06)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
-                <div className="w-12 h-12 rounded-xl overflow-hidden ring-2 ring-tertiary/20 shrink-0">
-                  <Image src={avatarFor(a.student_id)} alt={a.student_name} width={48} height={48} className="w-full h-full object-cover" />
+                <div className="w-12 h-12 rounded-xl ring-2 ring-tertiary/20 shrink-0 flex items-center justify-center" style={{ background: 'rgba(244,63,94,0.12)' }}>
+                  <span className="text-sm font-black font-headline text-tertiary-dim">{initials(a.student_name)}</span>
                 </div>
                 <div className="flex-grow min-w-0">
                   <h4 className="font-semibold text-sm text-on-surface">{a.student_name}</h4>
@@ -299,7 +304,12 @@ export default async function AttendancePage() {
 
             {/* Teacher performance */}
             <div className="space-y-4 mt-8">
-              <h3 className="text-lg font-bold font-headline text-on-surface">Teacher Activity</h3>
+              <div className="space-y-1">
+                <h3 className="text-lg font-bold font-headline text-on-surface">Teacher Activity</h3>
+                <p className="text-xs text-on-surface-variant/60 font-label">
+                  Share of all sessions taught by each teacher. Percentages sum to 100%.
+                </p>
+              </div>
               <div className="space-y-3">
                 {overview.teacher_activity.map(t => {
                   const barGradient = 'from-primary to-primary-dim'
@@ -340,8 +350,8 @@ export default async function AttendancePage() {
               <div className="space-y-4">
                 {overview.critical_alerts.map(a => (
                   <Link key={`${a.student_id}`} href={`/students/${a.student_id}`} className="flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-xl overflow-hidden ring-2 ring-tertiary/20 shrink-0">
-                      <Image src={avatarFor(a.student_id)} alt={a.student_name} width={44} height={44} className="w-full h-full object-cover" />
+                    <div className="w-11 h-11 rounded-xl ring-2 ring-tertiary/20 shrink-0 flex items-center justify-center" style={{ background: 'rgba(244,63,94,0.12)' }}>
+                      <span className="text-sm font-black font-headline text-tertiary-dim">{initials(a.student_name)}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">
@@ -356,12 +366,6 @@ export default async function AttendancePage() {
                   <p className="text-sm text-on-surface-variant/60 font-label">No alerts right now.</p>
                 )}
               </div>
-              <button
-                className="w-full py-3 rounded-xl font-label font-bold text-[11px] uppercase tracking-widest border border-white/[0.08] text-on-surface-variant/60 hover:text-on-surface transition-colors"
-                style={{ background: 'rgba(255,255,255,0.04)' }}
-              >
-                Launch Outreach Program
-              </button>
             </div>
 
             {/* Institution Health donut */}
